@@ -65,16 +65,6 @@ function Home() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     };
-  const welcomeOverlay = {
-    background: 'rgba(255,255,255,0.08)',
-    color: 'white',
-  padding: '2rem 0.5rem',
-  borderRadius: '1rem',
-  textAlign: 'center',
-  boxShadow: '0 4px 32px rgba(0,0,0,0.2)',
-  maxWidth: '320px',
-  width: '100%',
-  };
 
   // ...existing code...
   const whyOverlay = {

@@ -22,6 +22,7 @@ function AdminLostFound() {
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, filter, itemTypeFilter, sortBy]);
 
   const loadItems = async () => {

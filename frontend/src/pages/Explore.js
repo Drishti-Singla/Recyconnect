@@ -173,7 +173,6 @@ export default function Explore() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [sellerInfo, setSellerInfo] = useState(null);
   const [loadingSellerInfo, setLoadingSellerInfo] = useState(false);
-  const [hoveredItemId, setHoveredItemId] = useState(null);
   const [showItemMenu, setShowItemMenu] = useState(null);
   const [chatMessage, setChatMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
@@ -209,62 +208,6 @@ export default function Explore() {
       }
     }
   }, []);
-
-  // Sample data for development
-  const sampleItems = [
-    {
-      id: 1,
-      title: "iPhone 13 Pro",
-      description: "Excellent condition iPhone 13 Pro with 256GB storage. Comes with original charger and case.",
-      price: "₹45,000",
-      category: "Electronics",
-      condition: "Like New",
-      image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300",
-      owner: { name: "Rahul Sharma" },
-      location: "Campus Block A",
-      date: new Date().toLocaleDateString(),
-      urgent: true
-    },
-    {
-      id: 2,
-      title: "Study Desk",
-      description: "Wooden study desk in good condition. Perfect for students.",
-      price: "₹3,500",
-      category: "Furniture",
-      condition: "Good",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300",
-      owner: { name: "Priya Singh" },
-      location: "Campus Block B",
-      date: new Date().toLocaleDateString(),
-      urgent: false
-    },
-    {
-      id: 3,
-      title: "Engineering Textbooks",
-      description: "Complete set of CSE textbooks for 2nd year. All in excellent condition.",
-      price: "₹2,000",
-      category: "Books",
-      condition: "Excellent",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300",
-      owner: { name: "Amit Kumar" },
-      location: "Library Area",
-      date: new Date().toLocaleDateString(),
-      urgent: false
-    },
-    {
-      id: 4,
-      title: "Gaming Laptop",
-      description: "High-performance gaming laptop with RTX graphics. Perfect for gaming and development.",
-      price: "₹75,000",
-      category: "Electronics",
-      condition: "Excellent",
-      image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=300",
-      owner: { name: "Vikash Gupta" },
-      location: "Hostel Block C",
-      date: new Date().toLocaleDateString(),
-      urgent: true
-    }
-  ];
 
   // Load items function - moved outside useEffect so it can be called from handlers
   const loadItems = async () => {

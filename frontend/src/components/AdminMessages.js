@@ -24,6 +24,7 @@ function AdminMessages({ recipientId, recipientName, onClose }) {
     return () => {
       socketService.removeListener('new_chat_message', handleNewMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipientId]);
 
   const loadMessages = async () => {

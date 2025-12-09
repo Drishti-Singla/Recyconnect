@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { donatedItemAPI, userAPI } from '../services/api';
+import { donatedItemAPI } from '../services/api';
 import AdminMessages from './AdminMessages';
 
 function AdminDonations() {
