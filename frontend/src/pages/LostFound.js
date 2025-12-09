@@ -178,7 +178,6 @@ const LostFound = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortBy, setSortBy] = useState('Recent');
-  const [conditionFilter, setConditionFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -214,6 +213,7 @@ const LostFound = () => {
   // Filter items when search term, selected category, or items change
   useEffect(() => {
     filterItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, selectedCategory, sortBy, locationFilter, lostItems, foundItems, reportedItems, activeTab]);
   
   // Auto-refresh data every 30 seconds to get updates when admin marks items as resolved
@@ -542,13 +542,6 @@ const LostFound = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  // Handle tab change
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSelectedCategory('all');
-    setSearchTerm('');
   };
   
   // Render component

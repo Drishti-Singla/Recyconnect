@@ -311,4 +311,5 @@ export const flagAPI = {
 // Export socket service
 export { default as socketService } from './socket';
 
-export default { userAPI, itemAPI, donatedItemAPI, messageAPI, reportedItemAPI, userConcernAPI, flagAPI, authUtils };
+const api = { userAPI, itemAPI, donatedItemAPI, messageAPI, reportedItemAPI, userConcernAPI, flagAPI, authUtils };
+export default api;

@@ -14,7 +14,6 @@ function AdminDonations() {
   const [showModal, setShowModal] = useState(false);
   const [donorInfo, setDonorInfo] = useState(null);
   const [showDonorModal, setShowDonorModal] = useState(false);
-  const [loadingDonor, setLoadingDonor] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [messageRecipient, setMessageRecipient] = useState(null);
 
@@ -24,6 +23,7 @@ function AdminDonations() {
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, statusFilter, categoryFilter]);
 
   const loadItems = async () => {
@@ -109,35 +109,6 @@ function AdminDonations() {
     } catch (error) {
       console.error('Error updating status:', error);
       alert(`Failed to update status: ${error.message}`);
-    }
-  };
-
-  const fetchDonorInfo = async (item) => {
-    try {
-      setLoadingDonor(true);
-      console.log('🔍 Fetching donor info for item:', item);
-      
-      // Try to get donor info from different possible fields
-      let donorId = item.donatedBy || item.userId || item.user_id || item.donorId;
-      
-      if (!donorId) {
-        console.warn('No donor ID found in item:', item);
-        alert('Donor information not available for this item');
-        return;
-      }
-
-      console.log('🔍 Fetching user info for donor ID:', donorId);
-      const donor = await userAPI.getUserById(donorId);
-      
-      console.log('✅ Donor info fetched:', donor);
-      setDonorInfo(donor);
-      setShowDonorModal(true);
-      
-    } catch (error) {
-      console.error('❌ Error fetching donor info:', error);
-      alert('Error fetching donor information. The donor may no longer be available.');
-    } finally {
-      setLoadingDonor(false);
     }
   };
 

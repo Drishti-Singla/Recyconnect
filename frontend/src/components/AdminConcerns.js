@@ -20,6 +20,7 @@ function AdminConcerns() {
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [concerns, statusFilter, urgencyFilter, typeFilter]);
 
   const loadConcerns = async () => {

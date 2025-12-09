@@ -480,7 +480,9 @@ function Login() {
                         >
                           Secure Login with reCAPTCHA subject to{' '}
                           <a
-                            href="#"
+                            href="https://policies.google.com/privacy"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             style={{ color: '#007bff', textDecoration: 'underline' }}
                           >
                             Google Terms & Privacy
