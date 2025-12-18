@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { flagAPI } from '../services/api';
+import { flagAPI, itemAPI, donatedItemAPI } from '../services/api';
 
 function AdminFlags() {
   const { currentColors } = useTheme();
@@ -60,6 +60,25 @@ function AdminFlags() {
     } catch (error) {
       console.error('Error resolving flag:', error);
       alert(`Failed to resolve flag: ${error.message}`);
+    }
+  };
+
+  const handleRemoveItem = async (flag) => {
+    try {
+      // Delete the item based on target type
+      if (flag.target_type === 'item') {
+        await itemAPI.deleteItem(flag.target_id);
+      } else if (flag.target_type === 'donated_item') {
+        await donatedItemAPI.deleteDonatedItem(flag.target_id);
+      }
+      
+      // Mark flag as resolved
+      await handleResolveFlag(flag.id, `Item removed - ${flag.reason || 'Policy violation'}`);
+      
+      return true;
+    } catch (error) {
+      console.error('Error removing item:', error);
+      throw error;
     }
   };
 
@@ -371,35 +390,60 @@ function AdminFlags() {
                             color: 'white'
                           }}
                         >
-                          Mark Under Review
+                          🔍 Mark Under Review
                         </button>
                       )}
                       
                       <button
-                        onClick={() => {
-                          const actionTaken = prompt('What action was taken to resolve this flag?');
-                          if (actionTaken) {
-                            handleResolveFlag(flag.id, actionTaken);
+                        onClick={async () => {
+                          if (window.confirm('This will permanently remove the flagged item. Continue?')) {
+                            try {
+                              await handleRemoveItem(flag);
+                              alert('Item has been removed successfully');
+                            } catch (error) {
+                              alert(`Failed to remove item: ${error.message}`);
+                            }
                           }
                         }}
                         style={{
                           ...buttonStyle,
-                          backgroundColor: '#28a745',
+                          backgroundColor: '#dc3545',
                           color: 'white'
                         }}
                       >
-                        Resolve
+                        🚫 Remove Item
                       </button>
 
                       <button
-                        onClick={() => handleStatusChange(flag.id, 'dismissed')}
+                        onClick={() => {
+                          const warning = prompt('Enter warning message to send to the user:', 'Your item has been flagged for violating community guidelines. Please review and update it accordingly.');
+                          if (warning) {
+                            handleResolveFlag(flag.id, `User warned: ${warning}`);
+                            alert('Warning sent to user');
+                          }
+                        }}
+                        style={{
+                          ...buttonStyle,
+                          backgroundColor: '#ffc107',
+                          color: '#000'
+                        }}
+                      >
+                        ⚠️ Warn User
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Dismiss this flag as a false report?')) {
+                            handleResolveFlag(flag.id, 'Dismissed - False report or no violation found');
+                          }
+                        }}
                         style={{
                           ...buttonStyle,
                           backgroundColor: '#6c757d',
                           color: 'white'
                         }}
                       >
-                        Dismiss
+                        ✖️ Dismiss (False Report)
                       </button>
 
                       <button
