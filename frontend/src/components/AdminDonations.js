@@ -42,19 +42,28 @@ function AdminDonations() {
     let filtered = [...items];
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(item => {
-        switch (statusFilter) {
-          case 'available': return !item.claimedBy;
-          case 'claimed': return item.claimedBy && !item.claimedDate;
-          case 'completed': return item.claimedBy && item.claimedDate;
-          default: return true;
-        }
-      });
+      filtered = filtered.filter(item => item.status === statusFilter);
     }
 
     if (categoryFilter !== 'all') {
       filtered = filtered.filter(item => item.category === categoryFilter);
     }
+
+    // Sort by status priority (claimed > available > donated > inactive)
+    const statusOrder = {
+      'claimed': 4,
+      'available': 3,
+      'donated': 2,
+      'inactive': 1
+    };
+    filtered.sort((a, b) => {
+      const priorityA = statusOrder[a.status] || 0;
+      const priorityB = statusOrder[b.status] || 0;
+      if (priorityA !== priorityB) {
+        return priorityB - priorityA;
+      }
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
 
     setFilteredItems(filtered);
   };
@@ -69,34 +78,30 @@ function AdminDonations() {
     setShowModal(true);
   };
 
-  const getStatusColor = (item) => {
-    if (item.claimedBy && item.claimedDate) return '#2ed573'; // Completed
-    if (item.claimedBy) return '#ffa502'; // Claimed but not completed
-    return '#3742fa'; // Available
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available': return '#1dd1a1';
+      case 'claimed': return '#ffa502';
+      case 'donated': return '#2ed573';
+      case 'inactive': return '#95a5a6';
+      default: return '#3742fa';
+    }
   };
 
-  const getStatusLabel = (item) => {
-    if (item.claimedBy && item.claimedDate) return 'Completed';
-    if (item.claimedBy) return 'Claimed - Pending Pickup';
-    return 'Available';
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'available': return '🟢 Available';
+      case 'claimed': return '📦 Claimed';
+      case 'donated': return '✅ Donated';
+      case 'inactive': return '⭕ Inactive';
+      default: return status;
+    }
   };
 
-  const updateItemStatus = async (itemId, status, claimedBy = null) => {
+  const updateItemStatus = async (itemId, status) => {
     try {
-      // Prepare the update data
-      const updateData = {
-        status: status,
-        claimedBy: status === 'claimed' ? claimedBy : status === 'available' ? null : undefined,
-        claimedDate: status === 'completed' ? new Date().toISOString() : null
-      };
-
-      // Remove undefined values
-      Object.keys(updateData).forEach(key => 
-        updateData[key] === undefined && delete updateData[key]
-      );
-
       // Call API to update status
-      await donatedItemAPI.updateStatus(itemId, updateData);
+      await donatedItemAPI.updateStatus(itemId, { status });
       
       // Reload items from server to ensure we have the latest data
       await loadItems();
@@ -104,8 +109,14 @@ function AdminDonations() {
       setShowModal(false);
       console.log(`Successfully updated item ${itemId} status to ${status}`);
       
-      // Show success message
-      alert(`Item status successfully updated to ${status}`);
+      // Show success message with emoji
+      const statusMessages = {
+        'available': '🟢 Item marked as available',
+        'claimed': '📦 Item marked as claimed',
+        'donated': '✅ Donation completed successfully',
+        'inactive': '⭕ Item set to inactive'
+      };
+      alert(statusMessages[status] || `Status updated to ${status}`);
     } catch (error) {
       console.error('Error updating status:', error);
       alert(`Failed to update status: ${error.message}`);
@@ -153,10 +164,11 @@ function AdminDonations() {
               color: currentColors.text
             }}
           >
-            <option value="all">All Status</option>
-            <option value="available">Available</option>
-            <option value="claimed">Claimed - Pending Pickup</option>
-            <option value="completed">Completed</option>
+            <option value="all">All Statuses</option>
+            <option value="available">🟢 Available</option>
+            <option value="claimed">📦 Claimed (Pending Pickup)</option>
+            <option value="donated">✅ Donated (Completed)</option>
+            <option value="inactive">⭕ Inactive</option>
           </select>
         </div>
 
@@ -285,14 +297,14 @@ function AdminDonations() {
                 {item.title}
               </h4>
               <span style={{
-                backgroundColor: getStatusColor(item) + '20',
-                color: getStatusColor(item),
+                backgroundColor: getStatusColor(item.status) + '20',
+                color: getStatusColor(item.status),
                 padding: '2px 8px',
                 borderRadius: '12px',
                 fontSize: '12px',
                 fontWeight: 'bold'
               }}>
-                {getStatusLabel(item)}
+                {getStatusLabel(item.status)}
               </span>
             </div>
 
@@ -460,9 +472,13 @@ function AdminDonations() {
                 Admin Actions:
               </strong>
               
-              {selectedItem.claimedBy && !selectedItem.claimedDate && (
+              {selectedItem.status === 'claimed' && (
                 <button
-                  onClick={() => updateItemStatus(selectedItem.id, 'completed')}
+                  onClick={() => {
+                    if (window.confirm('Mark this donation as completed?')) {
+                      updateItemStatus(selectedItem.id, 'donated');
+                    }
+                  }}
                   style={{
                     padding: '8px 12px',
                     backgroundColor: '#2ed573',
@@ -473,13 +489,17 @@ function AdminDonations() {
                     fontSize: '14px'
                   }}
                 >
-                  ✓ Mark as Completed
+                  ✅ Mark as Donated (Complete)
                 </button>
               )}
 
-              {selectedItem.claimedBy && (
+              {selectedItem.status === 'available' && (
                 <button
-                  onClick={() => updateItemStatus(selectedItem.id, 'available')}
+                  onClick={() => {
+                    if (window.confirm('Mark this item as claimed? This means someone is picking it up.')) {
+                      updateItemStatus(selectedItem.id, 'claimed');
+                    }
+                  }}
                   style={{
                     padding: '8px 12px',
                     backgroundColor: '#ffa502',
@@ -490,7 +510,49 @@ function AdminDonations() {
                     fontSize: '14px'
                   }}
                 >
+                  📦 Mark as Claimed
+                </button>
+              )}
+
+              {(selectedItem.status === 'claimed' || selectedItem.status === 'donated') && (
+                <button
+                  onClick={() => {
+                    if (window.confirm('Make this item available again?')) {
+                      updateItemStatus(selectedItem.id, 'available');
+                    }
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#1dd1a1',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
                   🔄 Make Available Again
+                </button>
+              )}
+
+              {selectedItem.status !== 'inactive' && (
+                <button
+                  onClick={() => {
+                    if (window.confirm('Set this donation as inactive? It will be hidden from public view.')) {
+                      updateItemStatus(selectedItem.id, 'inactive');
+                    }
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#95a5a6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  ⭕ Set Inactive
                 </button>
               )}
 
@@ -534,9 +596,16 @@ function AdminDonations() {
               </button>
 
               <button
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to archive this donation?')) {
-                    alert('Archive functionality would be implemented here');
+                onClick={async () => {
+                  if (window.confirm('Delete this donated item? This action cannot be undone.')) {
+                    try {
+                      await donatedItemAPI.deleteDonatedItem(selectedItem.id);
+                      alert('Donation deleted successfully');
+                      setShowModal(false);
+                      loadItems();
+                    } catch (error) {
+                      alert('Failed to delete donation: ' + error.message);
+                    }
                   }
                 }}
                 style={{
@@ -549,7 +618,7 @@ function AdminDonations() {
                   fontSize: '14px'
                 }}
               >
-                🗃️ Archive
+                🗑️ Delete Donation
               </button>
             </div>
           </div>
