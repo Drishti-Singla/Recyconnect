@@ -111,16 +111,21 @@ function AdminExplore() {
     setFilteredItems(filtered);
   };
 
-  const handleDeleteItem = async (itemId) => {
+  const handleDeleteItem = async (itemId, isDonated = false) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
     try {
-      await itemAPI.deleteItem(itemId);
+      // Use the correct API based on item type
+      if (isDonated) {
+        await donatedItemAPI.deleteDonatedItem(itemId);
+      } else {
+        await itemAPI.deleteItem(itemId);
+      }
       alert('Item deleted successfully');
       loadItems();
     } catch (error) {
       console.error('Error deleting item:', error);
-      alert('Failed to delete item');
+      alert(`Failed to delete item: ${error.message}`);
     }
   };
 
@@ -355,7 +360,7 @@ function AdminExplore() {
                       {(item.is_flagged || item.isFlagged) ? '✓ Unflag Item' : '🚩 Flag Item'}
                     </button>
                     <button
-                      onClick={() => handleDeleteItem(item.id)}
+                      onClick={() => handleDeleteItem(item.id, item.isDonated)}
                       style={{
                         width: '100%',
                         padding: '10px 15px',
