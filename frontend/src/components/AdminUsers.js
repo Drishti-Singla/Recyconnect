@@ -595,7 +595,14 @@ function AdminUsers() {
             {/* Admin Actions */}
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button
-                onClick={() => updateUserStatus(selectedUser.id, selectedUser.status === 'active' ? 'suspended' : 'active')}
+                onClick={() => {
+                  const currentUser = JSON.parse(sessionStorage.getItem('user') || localStorage.getItem('user'));
+                  if (currentUser && currentUser.id === selectedUser.id) {
+                    alert('❌ You cannot change your own account status.\n\nFor security reasons, admin accounts must be managed by another administrator.');
+                    return;
+                  }
+                  updateUserStatus(selectedUser.id, selectedUser.status === 'active' ? 'suspended' : 'active');
+                }}
                 style={{
                   padding: '10px 20px',
                   backgroundColor: selectedUser.status === 'active' ? '#ff4757' : '#2ed573',
@@ -611,7 +618,14 @@ function AdminUsers() {
               </button>
               
               <button
-                onClick={() => updateUserRole(selectedUser.id, selectedUser.role === 'user' || selectedUser.role === 'USER' ? 'admin' : 'user')}
+                onClick={() => {
+                  const currentUser = JSON.parse(sessionStorage.getItem('user') || localStorage.getItem('user'));
+                  if (currentUser && currentUser.id === selectedUser.id) {
+                    alert('❌ You cannot change your own role.\n\nFor security reasons, admin role changes must be performed by another administrator.');
+                    return;
+                  }
+                  updateUserRole(selectedUser.id, selectedUser.role === 'user' || selectedUser.role === 'USER' ? 'admin' : 'user');
+                }}
                 style={{
                   padding: '10px 20px',
                   backgroundColor: '#ffa502',
