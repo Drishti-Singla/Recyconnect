@@ -216,9 +216,9 @@ function AdminUsers() {
       
       console.log(`Sending ${messageType} to user ${messageUser.id}:`, fullMessage);
       
-      // Send message through the messaging API
+      // Send message through the messaging API (recipientId matches backend expectation)
       await messageAPI.sendMessage({
-        receiver_id: messageUser.id,
+        recipientId: messageUser.id,
         content: fullMessage
       });
       
