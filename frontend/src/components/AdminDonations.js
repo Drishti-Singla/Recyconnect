@@ -423,8 +423,8 @@ function AdminDonations() {
               </div>
               <div>
                 <strong style={{ color: '#333333' }}>Status:</strong>
-                <p style={{ color: getStatusColor(selectedItem), margin: '2px 0' }}>
-                  {getStatusLabel(selectedItem)}
+                <p style={{ color: getStatusColor(selectedItem.status), margin: '2px 0' }}>
+                  {getStatusLabel(selectedItem.status)}
                 </p>
               </div>
             </div>
@@ -439,26 +439,21 @@ function AdminDonations() {
             <div style={{ marginBottom: '15px' }}>
               <strong style={{ color: '#333333' }}>Posted:</strong>
               <span style={{ color: '#666666', marginLeft: '8px' }}>
-                {new Date(selectedItem.createdAt).toLocaleString()}
+                {new Date(selectedItem.created_at).toLocaleString()}
               </span>
             </div>
 
-            {selectedItem.claimedBy && (
-              <div style={{ marginBottom: '15px' }}>
-                <strong style={{ color: '#333333' }}>Claimed By:</strong>
-                <span style={{ color: '#666666', marginLeft: '8px' }}>
-                  User ID: {selectedItem.claimedBy}
+            <div style={{ marginBottom: '15px' }}>
+              <strong style={{ color: '#333333' }}>Donor:</strong>
+              <span style={{ color: '#666666', marginLeft: '8px' }}>
+                {selectedItem.username || 'Anonymous'}
+              </span>
+              {selectedItem.user_phone && (
+                <span style={{ color: '#666666', display: 'block', marginTop: '5px' }}>
+                  Phone: {selectedItem.user_phone}
                 </span>
-                {selectedItem.claimedDate && (
-                  <div>
-                    <strong style={{ color: '#333333' }}>Completed:</strong>
-                    <span style={{ color: '#666666', marginLeft: '8px' }}>
-                      {new Date(selectedItem.claimedDate).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Admin Actions */}
             <div style={{ 
