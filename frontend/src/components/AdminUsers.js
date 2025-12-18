@@ -763,20 +763,21 @@ function AdminUsers() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 1000
+          zIndex: 1000,
+          backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: currentColors.surface,
+            backgroundColor: '#ffffff',
             padding: '30px',
             borderRadius: '12px',
             width: '90%',
             maxWidth: '500px',
-            border: `1px solid ${currentColors.border}`,
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+            border: '2px solid #e0e0e0',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ color: currentColors.text, margin: 0 }}>
