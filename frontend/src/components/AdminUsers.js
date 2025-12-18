@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { userAPI } from '../services/api';
+import { userAPI, messageAPI } from '../services/api';
 
 function AdminUsers() {
   const { currentColors } = useTheme();
@@ -211,18 +211,20 @@ function AdminUsers() {
     }
 
     try {
-      // For now, just show an alert. You can integrate with your messaging API
       const messagePrefix = messageType === 'warning' ? '⚠️ WARNING: ' : '💬 Admin Message: ';
-      console.log(`Sending ${messageType} to user ${messageUser.id}:`, messagePrefix + messageContent);
+      const fullMessage = messagePrefix + messageContent;
       
-      // Here you would call your messaging API
-      // await messageAPI.sendMessage(messageUser.id, messagePrefix + messageContent);
+      console.log(`Sending ${messageType} to user ${messageUser.id}:`, fullMessage);
       
-      alert(`${messageType === 'warning' ? '⚠️ Warning' : '📧 Message'} sent to ${messageUser.name}!\n\nMessage: ${messagePrefix}${messageContent}`);
+      // Send message through the messaging API
+      await messageAPI.sendMessage({
+        receiver_id: messageUser.id,
+        content: fullMessage
+      });
       
       setShowMessageModal(false);
       setMessageContent('');
-      showNotification(`${messageType === 'warning' ? 'Warning' : 'Message'} sent to ${messageUser.name}`, 'success');
+      showNotification(`${messageType === 'warning' ? '⚠️ Warning' : '📧 Message'} sent to ${messageUser.name}`, 'success');
     } catch (error) {
       console.error('Error sending message:', error);
       showNotification('Failed to send message. Please try again.', 'error');
