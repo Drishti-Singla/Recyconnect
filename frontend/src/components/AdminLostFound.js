@@ -143,20 +143,22 @@ function AdminLostFound() {
     switch (status) {
       case 'pending': return '#ffa502';
       case 'verified': return '#3742fa';
-      case 'active': return '#2ed573';
+      case 'active': return '#1dd1a1';
       case 'flagged': return '#ff4757';
       case 'resolved': return '#2ed573';
+      case 'inactive': return '#95a5a6';
       default: return currentColors.textSecondary;
     }
   };
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'pending': return 'Pending Verification';
-      case 'verified': return 'Verified & Active';
-      case 'active': return 'Active';
-      case 'flagged': return 'Flagged';
-      case 'resolved': return 'Resolved';
+      case 'pending': return '⏳ Pending';
+      case 'verified': return '✅ Verified';
+      case 'active': return '🟢 Active';
+      case 'flagged': return '🚩 Flagged';
+      case 'resolved': return '✔️ Resolved';
+      case 'inactive': return '⭕ Inactive';
       default: return status;
     }
   };
@@ -606,16 +608,10 @@ function AdminLostFound() {
               </button>
 
               <button
-                onClick={async (e) => {
+                onClick={(e) => {
                   e.stopPropagation();
                   if (window.confirm('Are you sure you want to flag this item as suspicious?')) {
-                    try {
-                      await handleStatusUpdate(selectedItem.id, 'flagged');
-                      alert('Item has been flagged as suspicious');
-                    } catch (error) {
-                      console.error('Error flagging item:', error);
-                      alert('Error flagging item');
-                    }
+                    handleStatusUpdate(selectedItem.id, 'flagged');
                   }
                 }}
                 style={{
