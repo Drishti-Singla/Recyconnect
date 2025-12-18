@@ -11,6 +11,7 @@ import AdminUsers from '../components/AdminUsers';
 import AdminFlags from '../components/AdminFlags';
 import AdminMessagesSection from '../components/AdminMessagesSection';
 import AdminExplore from '../components/AdminExplore';
+import AdminSettings from '../components/AdminSettings';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -200,7 +201,8 @@ function AdminDashboard() {
     { id: 'messages', label: 'Messages', icon: '💬' },
     { id: 'concerns', label: 'User Concerns', icon: '⚠️' },
     { id: 'flags', label: 'Flagged Content', icon: '🚩' },
-    { id: 'users', label: 'User Management', icon: '👥' }
+    { id: 'users', label: 'User Management', icon: '👥' },
+    { id: 'settings', label: 'Settings', icon: '⚙️' }
   ];
 
   const formatTime = (timeString) => {
@@ -490,7 +492,8 @@ function AdminDashboard() {
               {activeSection === 'concerns' && <AdminConcerns />}
               {activeSection === 'users' && <AdminUsers />}
               {activeSection === 'flags' && <AdminFlags />}
-              {!['explore', 'lost-found', 'donations', 'messages', 'concerns', 'users', 'flags'].includes(activeSection) && (
+              {activeSection === 'settings' && <AdminSettings />}
+              {!['explore', 'lost-found', 'donations', 'messages', 'concerns', 'users', 'flags', 'settings'].includes(activeSection) && (
                 <div style={{
                   backgroundColor: currentColors.surface,
                   padding: '40px',
