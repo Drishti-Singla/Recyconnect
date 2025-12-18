@@ -15,6 +15,10 @@ function AdminUsers() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageUser, setMessageUser] = useState(null);
+  const [messageContent, setMessageContent] = useState('');
+  const [messageType, setMessageType] = useState('contact'); // 'contact' or 'warning'
 
   // Show notification helper
   const showNotification = (message, type = 'success') => {
@@ -181,6 +185,47 @@ function AdminUsers() {
     } catch (error) {
       console.error('Error deleting user:', error);
       showNotification('Error deleting user. Please check your connection.', 'error');
+    }
+  };
+
+  const handleContactUser = (user) => {
+    setMessageUser(user);
+    setMessageType('contact');
+    setMessageContent('');
+    setShowMessageModal(true);
+    setShowModal(false);
+  };
+
+  const handleSendWarning = (user) => {
+    setMessageUser(user);
+    setMessageType('warning');
+    setMessageContent('');
+    setShowMessageModal(true);
+    setShowModal(false);
+  };
+
+  const sendMessage = async () => {
+    if (!messageContent.trim()) {
+      alert('❌ Please enter a message');
+      return;
+    }
+
+    try {
+      // For now, just show an alert. You can integrate with your messaging API
+      const messagePrefix = messageType === 'warning' ? '⚠️ WARNING: ' : '💬 Admin Message: ';
+      console.log(`Sending ${messageType} to user ${messageUser.id}:`, messagePrefix + messageContent);
+      
+      // Here you would call your messaging API
+      // await messageAPI.sendMessage(messageUser.id, messagePrefix + messageContent);
+      
+      alert(`${messageType === 'warning' ? '⚠️ Warning' : '📧 Message'} sent to ${messageUser.name}!\n\nMessage: ${messagePrefix}${messageContent}`);
+      
+      setShowMessageModal(false);
+      setMessageContent('');
+      showNotification(`${messageType === 'warning' ? 'Warning' : 'Message'} sent to ${messageUser.name}`, 'success');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      showNotification('Failed to send message. Please try again.', 'error');
     }
   };
 
@@ -641,6 +686,38 @@ function AdminUsers() {
               </button>
 
               <button
+                onClick={() => handleContactUser(selectedUser)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#5f27cd',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '14px'
+                }}
+              >
+                📧 Contact User
+              </button>
+
+              <button
+                onClick={() => handleSendWarning(selectedUser)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#ffa502',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '14px'
+                }}
+              >
+                ⚠️ Send Warning
+              </button>
+
+              <button
                 onClick={() => {
                   // Get current logged-in user ID
                   const currentUser = JSON.parse(sessionStorage.getItem('user') || localStorage.getItem('user'));
@@ -672,6 +749,124 @@ function AdminUsers() {
                 }}
               >
                 🗑️ Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Message/Warning Modal */}
+      {showMessageModal && messageUser && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: currentColors.surface,
+            padding: '30px',
+            borderRadius: '12px',
+            width: '90%',
+            maxWidth: '500px',
+            border: `1px solid ${currentColors.border}`,
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ color: currentColors.text, margin: 0 }}>
+                {messageType === 'warning' ? '⚠️ Send Warning to' : '📧 Contact'} {messageUser.name}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowMessageModal(false);
+                  setMessageContent('');
+                }}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: currentColors.text
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {messageType === 'warning' && (
+              <div style={{
+                padding: '10px',
+                backgroundColor: '#ffa50220',
+                border: '1px solid #ffa502',
+                borderRadius: '6px',
+                marginBottom: '15px'
+              }}>
+                <p style={{ color: '#ffa502', margin: 0, fontSize: '14px' }}>
+                  ⚠️ This will send a warning notification to the user. Use this for policy violations or inappropriate behavior.
+                </p>
+              </div>
+            )}
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: currentColors.text, display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                Message:
+              </label>
+              <textarea
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+                placeholder={messageType === 'warning' ? 'Enter warning message...' : 'Enter your message...'}
+                rows={5}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: `1px solid ${currentColors.border}`,
+                  backgroundColor: currentColors.background,
+                  color: currentColors.text,
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setShowMessageModal(false);
+                  setMessageContent('');
+                }}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: currentColors.border,
+                  color: currentColors.text,
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={sendMessage}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: messageType === 'warning' ? '#ffa502' : '#5f27cd',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {messageType === 'warning' ? '⚠️ Send Warning' : '📧 Send Message'}
               </button>
             </div>
           </div>
