@@ -869,6 +869,12 @@ function Dashboard() {
   };
 
   const handleDeleteAccount = async () => {
+    // Prevent admins from deleting their own account
+    if (user.role === 'admin') {
+      alert('❌ Admin accounts cannot be deleted from the user dashboard.\n\nFor security reasons, admin accounts must be managed directly through the database or by another administrator.');
+      return;
+    }
+
     const confirmed = window.confirm(
       'Are you sure you want to delete your account? This action cannot be undone and will permanently delete:\n\n' +
       '• Your profile information\n' +
@@ -3075,12 +3081,14 @@ function Dashboard() {
             >
               Change Password
             </button>
-            <button 
-              style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: 6, cursor: 'pointer' }}
-              onClick={handleDeleteAccount}
-            >
-              Delete Account
-            </button>
+            {user.role !== 'admin' && (
+              <button 
+                style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: 6, cursor: 'pointer' }}
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </button>
+            )}
           </div>
         ) : (
           <div style={{ background: currentColors.cardBackground, padding: '1.5rem', borderRadius: 8, border: `1px solid ${currentColors.border}` }}>

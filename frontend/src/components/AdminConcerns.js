@@ -153,26 +153,31 @@ function AdminConcerns() {
       }}>
         {[
           { 
+            icon: '📋',
             label: 'Total Concerns', 
             value: concerns.length, 
             color: '#3742fa' 
           },
           { 
+            icon: '⏳',
             label: 'Pending', 
             value: concerns.filter(c => c.status === 'pending').length, 
             color: '#ffa502' 
           },
           { 
+            icon: '🔄',
             label: 'In Progress', 
             value: concerns.filter(c => c.status === 'in_progress').length, 
             color: '#3742fa' 
           },
           { 
+            icon: '🚨',
             label: 'High Priority', 
             value: concerns.filter(c => c.urgency === 'high').length, 
             color: '#ff4757' 
           },
           { 
+            icon: '✅',
             label: 'Resolved', 
             value: concerns.filter(c => c.status === 'resolved').length, 
             color: '#2ed573' 
@@ -188,20 +193,13 @@ function AdminConcerns() {
               textAlign: 'center'
             }}
           >
-            <h3 style={{ 
-              color: stat.color, 
-              margin: '0 0 5px 0',
-              fontSize: '24px'
-            }}>
+            <div style={{ fontSize: '24px', marginBottom: '5px' }}>{stat.icon}</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: stat.color, marginBottom: '5px' }}>
               {stat.value}
-            </h3>
-            <p style={{ 
-              color: currentColors.textSecondary, 
-              margin: 0,
-              fontSize: '14px'
-            }}>
+            </div>
+            <div style={{ fontSize: '12px', color: currentColors.textSecondary }}>
               {stat.label}
-            </p>
+            </div>
           </div>
         ))}
       </div>

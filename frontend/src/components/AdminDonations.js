@@ -202,27 +202,31 @@ function AdminDonations() {
       {/* Summary Cards */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
         gap: '15px',
         marginBottom: '20px'
       }}>
         {[
           { 
+            icon: '🟢',
             label: 'Available Items', 
-            value: items.filter(item => !item.claimedBy).length, 
-            color: '#3742fa' 
+            value: items.filter(item => item.status === 'available').length, 
+            color: '#1dd1a1' 
           },
           { 
-            label: 'Pending Pickup', 
-            value: items.filter(item => item.claimedBy && !item.claimedDate).length, 
+            icon: '📦',
+            label: 'Claimed (Pending)', 
+            value: items.filter(item => item.status === 'claimed').length, 
             color: '#ffa502' 
           },
           { 
-            label: 'Completed', 
-            value: items.filter(item => item.claimedBy && item.claimedDate).length, 
+            icon: '✅',
+            label: 'Donated (Completed)', 
+            value: items.filter(item => item.status === 'donated').length, 
             color: '#2ed573' 
           },
           { 
+            icon: '📊',
             label: 'Total Items', 
             value: items.length, 
             color: '#a55eea' 
@@ -238,20 +242,13 @@ function AdminDonations() {
               textAlign: 'center'
             }}
           >
-            <h3 style={{ 
-              color: stat.color, 
-              margin: '0 0 5px 0',
-              fontSize: '24px'
-            }}>
+            <div style={{ fontSize: '24px', marginBottom: '5px' }}>{stat.icon}</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: stat.color, marginBottom: '5px' }}>
               {stat.value}
-            </h3>
-            <p style={{ 
-              color: currentColors.textSecondary, 
-              margin: 0,
-              fontSize: '14px'
-            }}>
+            </div>
+            <div style={{ fontSize: '12px', color: currentColors.textSecondary }}>
               {stat.label}
-            </p>
+            </div>
           </div>
         ))}
       </div>

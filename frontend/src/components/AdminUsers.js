@@ -270,7 +270,7 @@ function AdminUsers() {
         }}>
           <div style={{ fontSize: '24px', marginBottom: '5px' }}>👥</div>
           <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#3742fa', marginBottom: '5px' }}>
-            {users.length}
+            {filteredUsers.length}
           </div>
           <div style={{ fontSize: '12px', color: currentColors.textSecondary }}>
             Total Users
@@ -628,6 +628,15 @@ function AdminUsers() {
 
               <button
                 onClick={() => {
+                  // Get current logged-in user ID
+                  const currentUser = JSON.parse(sessionStorage.getItem('user') || localStorage.getItem('user'));
+                  
+                  // Prevent admin from deleting their own account
+                  if (currentUser && currentUser.id === selectedUser.id) {
+                    alert('❌ You cannot delete your own admin account.\n\nFor security reasons, admin accounts must be managed by another administrator.');
+                    return;
+                  }
+
                   if (window.confirm(`Are you sure you want to delete user ${selectedUser.name}?\n\nThis action cannot be undone and will permanently remove:\n- User account and profile\n- All user data and history\n- Any associated content\n\nType "DELETE" to confirm this action.`)) {
                     const confirmText = window.prompt('Please type "DELETE" to confirm:');
                     if (confirmText === 'DELETE') {
