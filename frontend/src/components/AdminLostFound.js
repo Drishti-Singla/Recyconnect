@@ -66,27 +66,8 @@ function AdminLostFound() {
       console.log('🔍 Before filtering - Total items:', filtered.length);
       
       filtered = filtered.filter(item => {
-        const matchesFilter = (() => {
-          switch (filter) {
-            case 'pending': 
-              // Pending: status=pending
-              return item.status === 'pending';
-            case 'verified': 
-              // Verified: status=verified
-              return item.status === 'verified';
-            case 'resolved': 
-              // Resolved: status=resolved
-              return item.status === 'resolved';
-            case 'flagged':
-              // Flagged: status=flagged
-              return item.status === 'flagged';
-            default: 
-              return true;
-          }
-        })();
-        
+        const matchesFilter = item.status === filter;
         console.log(`🔍 Item ${item.id} - Status: "${item.status}" - Filter: ${filter} - Matches: ${matchesFilter}`);
-        
         return matchesFilter;
       });
       
@@ -101,10 +82,10 @@ function AdminLostFound() {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'status':
-          // Sort by status priority: pending > flagged > verified > active > resolved > inactive
+          // Sort by status priority: flagged > pending > verified > active > resolved > inactive
           const statusOrder = { 
-            pending: 6, 
-            flagged: 5, 
+            flagged: 6,
+            pending: 5, 
             verified: 4, 
             active: 3, 
             resolved: 2, 
@@ -139,10 +120,12 @@ function AdminLostFound() {
       
       // Show success message
       const statusMessages = {
-        'verified': 'Item has been verified',
-        'resolved': 'Item has been marked as resolved',
-        'flagged': 'Item has been flagged as suspicious',
-        'pending': 'Item set back to pending'
+        'pending': '⏳ Item set to pending verification',
+        'verified': '✅ Item has been verified',
+        'active': '🟢 Item is now active and visible',
+        'flagged': '🚩 Item has been flagged as suspicious',
+        'resolved': '✔️ Item has been marked as resolved',
+        'inactive': '⭕ Item set to inactive (hidden from public)'
       };
       alert(statusMessages[newStatus] || `Item status updated to ${newStatus}`);
     } catch (error) {
@@ -219,10 +202,13 @@ function AdminLostFound() {
               color: currentColors.text
             }}
           >
-            <option value="all">All Status</option>
-            <option value="pending">Pending Verification</option>
-            <option value="verified">Verified & Active</option>
-            <option value="resolved">Resolved</option>
+            <option value="all">All Statuses</option>
+            <option value="pending">⏳ Pending Verification</option>
+            <option value="verified">✅ Verified</option>
+            <option value="active">🟢 Active</option>
+            <option value="flagged">🚩 Flagged</option>
+            <option value="resolved">✔️ Resolved</option>
+            <option value="inactive">⭕ Inactive</option>
           </select>
         </div>
 
@@ -526,7 +512,27 @@ function AdminLostFound() {
                     fontSize: '14px'
                   }}
                 >
-                  ✓ Verify Item
+                  ✅ Verify Item
+                </button>
+              )}
+
+              {(selectedItem.status === 'verified' || selectedItem.status === 'pending') && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusUpdate(selectedItem.id, 'active');
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#1dd1a1',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  🟢 Set Active
                 </button>
               )}
 
@@ -546,7 +552,29 @@ function AdminLostFound() {
                     fontSize: '14px'
                   }}
                 >
-                  ✓ Mark as Resolved
+                  ✔️ Mark as Resolved
+                </button>
+              )}
+
+              {selectedItem.status !== 'inactive' && selectedItem.status !== 'resolved' && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm('Set this item as inactive? It will be hidden from public view.')) {
+                      handleStatusUpdate(selectedItem.id, 'inactive');
+                    }
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#95a5a6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  ⭕ Set Inactive
                 </button>
               )}
 
