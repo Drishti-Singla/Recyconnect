@@ -63,7 +63,7 @@ const Terms = () => {
                 </h2>
                 <p className="text-foreground/80 leading-relaxed">
                   To access certain features of RecyConnect, you must register for an account using 
-                  a valid @chitkara.edu.in email address and your assigned college code. You are 
+                  a valid @chitkara.edu.in email address. You are 
                   responsible for maintaining the confidentiality of your account and password. 
                   You agree to accept responsibility for all activities that occur under your account.
                 </p>

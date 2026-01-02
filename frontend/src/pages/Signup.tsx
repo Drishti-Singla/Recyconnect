@@ -19,7 +19,6 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    collegeCode: "",
     phone: "",
     password: "",
     confirmPassword: "",
@@ -27,8 +26,6 @@ const Signup = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-
-  const validCollegeCodes = ["CHIT01", "CHIT02", "UNIV03", "COL004", "EDU005"];
 
   const validateField = (name: string, value: string) => {
     let error = "";
@@ -49,11 +46,6 @@ const Signup = () => {
             return newCount;
           });
         }
-        break;
-      case "collegeCode":
-        if (!value.trim()) error = "College code is required";
-        else if (value.length !== 6) error = "College code must be 6 characters";
-        else if (!validCollegeCodes.includes(value.toUpperCase())) error = "Invalid college code";
         break;
       case "phone":
         if (!value.trim()) error = "Phone number is required";
@@ -93,7 +85,6 @@ const Signup = () => {
     return (
       formData.username.trim().length >= 3 &&
       formData.email.endsWith("@chitkara.edu.in") &&
-      validCollegeCodes.includes(formData.collegeCode.toUpperCase()) &&
       /^\d{10}$/.test(formData.phone) &&
       formData.password.length >= 8 &&
       formData.password === formData.confirmPassword
@@ -114,7 +105,6 @@ const Signup = () => {
     setTouched({
       username: true,
       email: true,
-      collegeCode: true,
       phone: true,
       password: true,
       confirmPassword: true,
@@ -129,8 +119,7 @@ const Signup = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        phone: formData.phone,
-        collegeCode: formData.collegeCode
+        phone: formData.phone
       });
 
       toast({
@@ -271,44 +260,6 @@ const Signup = () => {
               </div>
               {errors.email && touched.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
-              )}
-            </div>
-
-            {/* College Code */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="collegeCode">College Code</Label>
-                <span className="text-xs text-muted-foreground" title="Enter the unique code provided by your college">
-                  ℹ️
-                </span>
-              </div>
-              <div className="relative">
-                <Input
-                  id="collegeCode"
-                  name="collegeCode"
-                  type="text"
-                  placeholder="e.g., CHIT01"
-                  value={formData.collegeCode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  maxLength={6}
-                  className={`pr-10 uppercase ${
-                    getFieldStatus("collegeCode") === "error" ? "border-destructive" : 
-                    getFieldStatus("collegeCode") === "success" ? "border-secondary" : ""
-                  }`}
-                />
-                {getFieldStatus("collegeCode") && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    {getFieldStatus("collegeCode") === "error" ? (
-                      <XCircle className="w-5 h-5 text-destructive" />
-                    ) : (
-                      <CheckCircle className="w-5 h-5 text-secondary" />
-                    )}
-                  </div>
-                )}
-              </div>
-              {errors.collegeCode && touched.collegeCode && (
-                <p className="text-sm text-destructive">{errors.collegeCode}</p>
               )}
             </div>
 

@@ -24,7 +24,6 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    collegeCode: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -40,12 +39,6 @@ const Login = () => {
     return "";
   };
 
-  const validateCollegeCode = (code: string) => {
-    if (!code.trim()) return "College code is required";
-    if (code.length !== 6) return "Invalid college code";
-    return "";
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -55,8 +48,7 @@ const Login = () => {
   const isFormValid = () => {
     return (
       formData.email.endsWith("@chitkara.edu.in") &&
-      formData.password.length > 0 &&
-      formData.collegeCode.length === 6
+      formData.password.length > 0
     );
   };
 
@@ -65,13 +57,11 @@ const Login = () => {
 
     const emailError = validateEmail(formData.email);
     const passwordError = validatePassword(formData.password);
-    const collegeCodeError = validateCollegeCode(formData.collegeCode);
 
-    if (emailError || passwordError || collegeCodeError) {
+    if (emailError || passwordError) {
       setErrors({
         email: emailError,
         password: passwordError,
-        collegeCode: collegeCodeError,
       });
       return;
     }
@@ -175,24 +165,6 @@ const Login = () => {
               />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
-              )}
-            </div>
-
-            {/* College Code */}
-            <div className="space-y-2">
-              <Label htmlFor="collegeCode">College Code</Label>
-              <Input
-                id="collegeCode"
-                name="collegeCode"
-                type="text"
-                placeholder="e.g., CHIT01"
-                value={formData.collegeCode}
-                onChange={handleChange}
-                maxLength={6}
-                className={`uppercase ${errors.collegeCode ? "border-destructive" : ""}`}
-              />
-              {errors.collegeCode && (
-                <p className="text-sm text-destructive">{errors.collegeCode}</p>
               )}
             </div>
 

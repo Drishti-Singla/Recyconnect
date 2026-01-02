@@ -101,10 +101,10 @@ Backend:  http://localhost:8080
 
 ## 🎮 Demo Credentials
 
-| Role  | Email | College Code | Password |
-|-------|-------|--------------|----------|
-| **Admin** | admin@chitkara.edu.in | CHIT01 | admin@chitkara.edu.in |
-| **User** | user@chitkara.edu.in | CHIT01 | user@chitkara.edu.in |
+| Role  | Email | Password |
+|-------|-------|----------|
+| **Admin** | admin@chitkara.edu.in | admin@chitkara.edu.in |
+| **User** | user@chitkara.edu.in | user@chitkara.edu.in |
 
 ---
 
@@ -177,7 +177,6 @@ WebSocket: /                          - Real-time chat
 ### 🔐 Secure Authentication
 - JWT-based authentication
 - Password hashing with bcryptjs
-- College email verification
 - Role-based access control (Admin/User)
 
 ### 📱 Responsive Design
