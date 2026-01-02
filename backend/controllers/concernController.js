@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { sendFeedbackEmail, sendConcernEmail } = require('../utils/emailService');
 
 // Create new concern
 exports.createConcern = async (req, res) => {
@@ -19,6 +20,31 @@ exports.createConcern = async (req, res) => {
        RETURNING *`,
       [userId, title, description, concernType, relatedId || null, priority || 'medium', image_urls || [], 'pending']
     );
+
+    // Get user info for email notification
+    const userResult = await db.query(
+      'SELECT username, email FROM users WHERE id = $1',
+      [userId]
+    );
+    const user = userResult.rows[0];
+
+    // Send email notification to admin
+    const emailData = {
+      title,
+      description,
+      concernType,
+      priority: priority || 'medium',
+      username: user.username,
+      email: user.email,
+      imageUrls: image_urls || []
+    };
+
+    // Send email based on type (feedback vs concern)
+    if (concernType === 'general' && title === 'User Feedback') {
+      await sendFeedbackEmail(emailData);
+    } else {
+      await sendConcernEmail(emailData);
+    }
 
     res.status(201).json({
       message: 'Concern submitted successfully',

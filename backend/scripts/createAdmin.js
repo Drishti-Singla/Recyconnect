@@ -24,10 +24,15 @@ async function createAdminUser() {
   try {
     console.log('🔐 Create Admin User\n');
 
-    const username = await question('Username: ');
-    const email = await question('Email: ');
-    const password = await question('Password: ');
-    const phone = await question('Phone (optional): ');
+    // Use fixed admin credentials
+    const username = 'admin';
+    const email = 'admin@chitkara.edu.in';
+    const password = 'admin@chitkara.edu.in';
+    const phone = '';
+
+    console.log('Creating admin with credentials:');
+    console.log('Email: admin@chitkara.edu.in');
+    console.log('Password: admin@chitkara.edu.in\n');
 
     // Check if user already exists
     const existingUser = await db.query(
@@ -36,9 +41,20 @@ async function createAdminUser() {
     );
 
     if (existingUser.rows.length > 0) {
-      console.log('\n❌ User with this email or username already exists!');
+      console.log('\n⚠️  Admin user already exists. Updating password...');
+      
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Update password
+      await db.query(
+        'UPDATE users SET password = $1, updated_at = CURRENT_TIMESTAMP WHERE email = $2',
+        [hashedPassword, email]
+      );
+      
+      console.log('✅ Admin password updated successfully!');
       rl.close();
-      process.exit(1);
+      process.exit(0);
     }
 
     // Hash password

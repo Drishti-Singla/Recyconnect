@@ -6,11 +6,13 @@ const { validateId } = require('../middleware/validation');
 
 // Public routes
 router.get('/', optionalAuth, reportedItemController.getAllReportedItems);
-router.get('/:id', optionalAuth, validateId, reportedItemController.getReportedItemById);
 
-// Protected routes
-router.post('/', authenticateToken, reportedItemController.createReportedItem);
+// Protected routes - specific routes BEFORE parameterized routes
 router.get('/user/my-reported', authenticateToken, reportedItemController.getUserReportedItems);
+router.post('/', authenticateToken, reportedItemController.createReportedItem);
+
+// Parameterized routes must come AFTER specific routes
+router.get('/:id', optionalAuth, validateId, reportedItemController.getReportedItemById);
 router.put('/:id', authenticateToken, validateId, reportedItemController.updateReportedItem);
 router.patch('/:id', authenticateToken, validateId, reportedItemController.updateReportedItemStatus);
 router.delete('/:id', authenticateToken, validateId, reportedItemController.deleteReportedItem);

@@ -19,7 +19,22 @@ const generateToken = (user) => {
 // Register new user
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, phone, address } = req.body;
+    const { username, email, password, phone, address, collegeCode } = req.body;
+
+    // Validate college code
+    const validCollegeCodes = ["CHIT01", "CHIT02", "UNIV03", "COL004", "EDU005"];
+    if (collegeCode && !validCollegeCodes.includes(collegeCode.toUpperCase())) {
+      return res.status(400).json({ 
+        error: 'Invalid college code' 
+      });
+    }
+
+    // Validate email domain
+    if (!email.endsWith('@chitkara.edu.in')) {
+      return res.status(400).json({ 
+        error: 'Email must be a valid Chitkara University email (@chitkara.edu.in)' 
+      });
+    }
 
     // Check if user already exists
     const existingUser = await db.query(
@@ -38,10 +53,10 @@ exports.register = async (req, res) => {
 
     // Insert new user
     const result = await db.query(
-      `INSERT INTO users (username, email, password, phone, address, role, auth_provider) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7) 
-       RETURNING id, username, email, phone, address, bio, roll_number, auth_provider, role, created_at`,
-      [username, email, hashedPassword, phone || null, address || null, 'user', 'local']
+      `INSERT INTO users (username, email, password, phone, address, college_code, role, auth_provider) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+       RETURNING id, username, email, phone, address, bio, roll_number, college_code, auth_provider, role, created_at`,
+      [username, email, hashedPassword, phone || null, address || null, collegeCode?.toUpperCase() || null, 'user', 'local']
     );
 
     const newUser = result.rows[0];
@@ -59,6 +74,7 @@ exports.register = async (req, res) => {
         address: newUser.address,
         bio: newUser.bio,
         roll_number: newUser.roll_number,
+        college_code: newUser.college_code,
         auth_provider: newUser.auth_provider,
         role: newUser.role
       },
