@@ -51,7 +51,10 @@ import {
   TrendingUp,
   Clock,
   Activity,
-  Loader2
+  Loader2,
+  User,
+  Edit,
+  Lock
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { adminAPI, donatedItemsAPI, concernsAPI, messagesAPI, itemsAPI, authAPI } from "@/services/api";
