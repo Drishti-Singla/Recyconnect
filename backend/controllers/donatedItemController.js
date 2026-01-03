@@ -46,7 +46,15 @@ exports.getAllDonatedItems = async (req, res) => {
     res.json({ donatedItems: result.rows });
   } catch (error) {
     console.error('Get all donated items error:', error);
-    res.status(500).json({ error: 'Failed to get donated items' });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      query: error.query
+    });
+    res.status(500).json({ 
+      error: 'Failed to get donated items',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -108,12 +116,25 @@ exports.createDonatedItem = async (req, res) => {
       quantity
     });
 
-    const result = await db.query(
-      `INSERT INTO donated_items (donor_id, title, description, category, condition, pickup_location, anonymity, image_urls, status, quantity)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-       RETURNING *`,
-      [donorId, title, description, category, condition || 'good', pickup_location, anonymityValue, image_urls || [], 'available', quantity || 1]
-    );
+    // Try to insert with all fields, fallback if columns don't exist
+    let result;
+    try {
+      result = await db.query(
+        `INSERT INTO donated_items (donor_id, title, description, category, condition, pickup_location, anonymity, image_urls, status, quantity)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         RETURNING *`,
+        [donorId, title, description, category, condition || 'good', pickup_location, anonymityValue, image_urls || [], 'available', quantity || 1]
+      );
+    } catch (dbError) {
+      // Fallback to basic columns if anonymity/quantity columns don't exist
+      console.warn('Falling back to basic insert:', dbError.message);
+      result = await db.query(
+        `INSERT INTO donated_items (donor_id, title, description, category, condition, pickup_location, image_urls, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [donorId, title, description, category, condition || 'good', pickup_location, image_urls || [], 'available']
+      );
+    }
 
     console.log('Donated item created successfully:', result.rows[0]);
 

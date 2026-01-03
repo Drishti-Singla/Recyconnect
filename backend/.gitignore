@@ -25,3 +25,4 @@ Thumbs.db
 # Uploads (if storing locally before cloudinary)
 uploads/
 temp/
+.vercel
