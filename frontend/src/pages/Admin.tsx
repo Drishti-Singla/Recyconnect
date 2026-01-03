@@ -57,12 +57,12 @@ import {
   Lock
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { adminAPI, donatedItemsAPI, concernsAPI, messagesAPI, itemsAPI, authAPI } from "@/services/api";
+import { adminAPI, donatedItemsAPI, concernsAPI, messagesAPI, itemsAPI, reportedItemsAPI, authAPI } from "@/services/api";
 
 const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeSection, setActiveSection] = useState<"overview" | "users" | "donations" | "marketplace" | "concerns" | "messages" | "settings">("overview");
+  const [activeSection, setActiveSection] = useState<"overview" | "users" | "donations" | "marketplace" | "lostfound" | "concerns" | "messages" | "settings">("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
@@ -70,6 +70,7 @@ const Admin = () => {
   const [concerns, setConcerns] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [marketplaceItems, setMarketplaceItems] = useState<any[]>([]);
+  const [reportedItems, setReportedItems] = useState<any[]>([]);
   const [adminProfile, setAdminProfile] = useState<any>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -168,7 +169,7 @@ const Admin = () => {
     console.log('loadAdminData() called - starting to fetch data...');
     try {
       setLoading(true);
-      const [usersData, donationsData, concernsData, messagesData, itemsData] = await Promise.all([
+      const [usersData, donationsData, concernsData, messagesData, itemsData, reportedData] = await Promise.all([
         adminAPI.getAllUsers().catch((err) => {
           console.error('Failed to load users:', err);
           return { users: [] };
@@ -188,16 +189,21 @@ const Admin = () => {
         itemsAPI.getAll().catch((err) => {
           console.error('Failed to load items:', err);
           return { items: [] };
+        }),
+        reportedItemsAPI.getAll().catch((err) => {
+          console.error('Failed to load reported items:', err);
+          return { reportedItems: [] };
         })
       ]);
       
-      console.log('Loaded data:', { usersData, donationsData, concernsData, messagesData, itemsData });
+      console.log('Loaded data:', { usersData, donationsData, concernsData, messagesData, itemsData, reportedData });
       
       setUsers(usersData.users || []);
       setDonations(donationsData.donatedItems || []);
       setConcerns(concernsData.concerns || []);
       setMessages(messagesData.conversations || []);
       setMarketplaceItems(itemsData.items || []);
+      setReportedItems(reportedData.reportedItems || []);
       
       // Load admin profile
       await loadAdminProfile();
@@ -359,9 +365,13 @@ const Admin = () => {
           await concernsAPI.delete(deleteTarget.id);
           toast({ title: "Concern deleted successfully" });
           break;
-        case 'lost & found item':
+        case 'marketplace item':
           await itemsAPI.delete(deleteTarget.id);
-          toast({ title: "Item deleted successfully" });
+          toast({ title: "Marketplace item deleted successfully" });
+          break;
+        case 'reported item':
+          await reportedItemsAPI.delete(deleteTarget.id);
+          toast({ title: "Reported item deleted successfully" });
           break;
       }
       setShowDeleteDialog(false);
@@ -526,6 +536,25 @@ const Admin = () => {
     }
   };
 
+  const handleUpdateReportedItemStatus = async (itemId: number, status: string) => {
+    try {
+      await reportedItemsAPI.updateStatus(itemId, { status });
+      toast({ title: `Reported item marked as ${status}` });
+      loadAdminData();
+    } catch (error: any) {
+      toast({
+        title: "Failed to update reported item status",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteReportedItem = async (itemId: number) => {
+    setDeleteTarget({ id: itemId, type: 'reported item' });
+    setShowDeleteDialog(true);
+  };
+
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
@@ -571,6 +600,7 @@ const Admin = () => {
     { id: "users", icon: Users, label: "Users" },
     { id: "donations", icon: Package, label: "Donations" },
     { id: "marketplace", icon: Package, label: "Marketplace" },
+    { id: "lostfound", icon: Search, label: "Lost & Found" },
     { id: "concerns", icon: Flag, label: "Concerns" },
     { id: "messages", icon: MessageCircle, label: "Messages" },
     { id: "settings", icon: Settings, label: "Settings" },
@@ -580,6 +610,7 @@ const Admin = () => {
     { label: "Total Users", value: users.length.toString(), icon: Users, color: "bg-primary" },
     { label: "Total Donations", value: donations.length.toString(), icon: Package, color: "bg-secondary" },
     { label: "Marketplace", value: marketplaceItems.length.toString(), icon: Package, color: "bg-yellow-500" },
+    { label: "Lost & Found", value: reportedItems.length.toString(), icon: Search, color: "bg-blue-500" },
     { label: "Active Concerns", value: concerns.filter(c => c.status === 'pending' || c.status === 'in_progress').length.toString(), icon: Flag, color: "bg-destructive" },
   ];
 
@@ -637,7 +668,7 @@ const Admin = () => {
             </h1>
 
             {/* Stats Grid */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
               {stats.map((stat, index) => (
                 <div key={index} className="bg-card rounded-xl p-6 shadow-card">
                   <div className="flex items-center justify-between mb-4">
@@ -1207,6 +1238,108 @@ const Admin = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteItem(item.id, 'marketplace item')}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Delete Item</TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </TooltipProvider>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
+
+        {/* Lost & Found Tab */}
+        {activeSection === "lostfound" && (
+          <div className="animate-fade-in">
+            <h1 className="font-display text-3xl font-bold text-foreground mb-6">Lost & Found Items</h1>
+            <div className="bg-card rounded-xl shadow-card overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Reporter</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                      </TableCell>
+                    </TableRow>
+                  ) : reportedItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                        No lost & found items
+                      </TableCell>
+                    </TableRow>
+                  ) : reportedItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.id}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{item.title}</TableCell>
+                      <TableCell>
+                        <Badge variant={item.report_type === 'lost' ? 'destructive' : 'default'}>
+                          {item.report_type || 'N/A'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{item.category}</TableCell>
+                      <TableCell>{item.username || 'Anonymous'}</TableCell>
+                      <TableCell className="max-w-[150px] truncate">{item.location || 'N/A'}</TableCell>
+                      <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <div className="flex gap-1">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => handleViewUser(item.id)}>
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>View Details</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => handleContactUser(item.user_id, item.username)}>
+                                  <MessageCircle className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Contact Reporter</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => handleUpdateReportedItemStatus(item.id, 'found')}>
+                                  <Search className="w-4 h-4 text-green-600" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Mark as Found</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => handleUpdateReportedItemStatus(item.id, 'claimed')}>
+                                  <Package className="w-4 h-4 text-blue-600" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Mark as Claimed</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteReportedItem(item.id)}>
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </TooltipTrigger>
