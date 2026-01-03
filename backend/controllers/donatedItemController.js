@@ -84,9 +84,16 @@ exports.createDonatedItem = async (req, res) => {
       category, 
       condition, 
       pickup_location,
+      is_anonymous,
       anonymity, 
-      image_urls 
+      image_urls,
+      quantity
     } = req.body;
+
+    // Support both is_anonymous (boolean) and anonymity (string) for backward compatibility
+    const anonymityValue = is_anonymous !== undefined 
+      ? (is_anonymous ? 'anonymous' : 'public')
+      : (anonymity || 'public');
 
     console.log('Creating donated item with data:', {
       donorId,
@@ -95,15 +102,17 @@ exports.createDonatedItem = async (req, res) => {
       category,
       condition,
       pickup_location,
-      anonymity,
-      image_urls
+      is_anonymous,
+      anonymity: anonymityValue,
+      image_urls,
+      quantity
     });
 
     const result = await db.query(
-      `INSERT INTO donated_items (donor_id, title, description, category, condition, pickup_location, anonymity, image_urls, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO donated_items (donor_id, title, description, category, condition, pickup_location, anonymity, image_urls, status, quantity)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
-      [donorId, title, description, category, condition || 'good', pickup_location, anonymity || 'public', image_urls || [], 'available']
+      [donorId, title, description, category, condition || 'good', pickup_location, anonymityValue, image_urls || [], 'available', quantity || 1]
     );
 
     console.log('Donated item created successfully:', result.rows[0]);
