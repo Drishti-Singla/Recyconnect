@@ -577,10 +577,10 @@ const Admin = () => {
   ];
 
   const stats = [
-    { label: "Total Users", value: users.length.toString(), icon: Users, change: "+12%", color: "bg-primary" },
-    { label: "Total Donations", value: donations.length.toString(), icon: Package, change: "+8%", color: "bg-secondary" },
-    { label: "Marketplace", value: marketplaceItems.length.toString(), icon: Package, change: "+5%", color: "bg-yellow-500" },
-    { label: "Active Concerns", value: concerns.filter(c => c.status === 'pending' || c.status === 'in_progress').length.toString(), icon: Flag, change: "-3%", color: "bg-destructive" },
+    { label: "Total Users", value: users.length.toString(), icon: Users, color: "bg-primary" },
+    { label: "Total Donations", value: donations.length.toString(), icon: Package, color: "bg-secondary" },
+    { label: "Marketplace", value: marketplaceItems.length.toString(), icon: Package, color: "bg-yellow-500" },
+    { label: "Active Concerns", value: concerns.filter(c => c.status === 'pending' || c.status === 'in_progress').length.toString(), icon: Flag, color: "bg-destructive" },
   ];
 
   return (
@@ -644,9 +644,6 @@ const Admin = () => {
                     <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center`}>
                       <stat.icon className="w-6 h-6 text-primary-foreground" />
                     </div>
-                    <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-secondary' : 'text-destructive'}`}>
-                      {stat.change}
-                    </span>
                   </div>
                   <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -662,20 +659,90 @@ const Admin = () => {
                   Recent Activity
                 </h2>
                 <div className="space-y-4">
-                  {[
-                    { action: "New user registered", user: "john_doe", time: "2 min ago" },
-                    { action: "Item donated", user: "sarah_smith", time: "15 min ago" },
-                    { action: "Concern raised", user: "mike_j", time: "1 hour ago" },
-                    { action: "Item marked as claimed", user: "anonymous", time: "2 hours ago" },
-                  ].map((activity, index) => (
-                    <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                      <div>
-                        <p className="font-medium text-foreground">{activity.action}</p>
-                        <p className="text-sm text-muted-foreground">by {activity.user}</p>
+                  {(() => {
+                    const activities: Array<{ action: string; user: string; time: string; timestamp: Date }> = [];
+                    
+                    // Add recent users
+                    users.slice(0, 3).forEach(user => {
+                      activities.push({
+                        action: "New user registered",
+                        user: user.username || 'Anonymous',
+                        time: new Date(user.created_at).toISOString(),
+                        timestamp: new Date(user.created_at)
+                      });
+                    });
+                    
+                    // Add recent donations
+                    donations.slice(0, 3).forEach(donation => {
+                      activities.push({
+                        action: `Donated ${donation.title}`,
+                        user: donation.username || 'Anonymous',
+                        time: new Date(donation.created_at).toISOString(),
+                        timestamp: new Date(donation.created_at)
+                      });
+                    });
+                    
+                    // Add recent marketplace items
+                    marketplaceItems.slice(0, 3).forEach(item => {
+                      activities.push({
+                        action: `Listed ${item.title} for sale`,
+                        user: item.username || 'Anonymous',
+                        time: new Date(item.created_at).toISOString(),
+                        timestamp: new Date(item.created_at)
+                      });
+                    });
+                    
+                    // Add recent concerns
+                    concerns.slice(0, 3).forEach(concern => {
+                      activities.push({
+                        action: `Raised concern: ${concern.title}`,
+                        user: concern.username || 'Anonymous',
+                        time: new Date(concern.created_at).toISOString(),
+                        timestamp: new Date(concern.created_at)
+                      });
+                    });
+                    
+                    // Sort by timestamp descending and take top 5
+                    const sortedActivities = activities
+                      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+                      .slice(0, 5);
+                    
+                    // Helper function to format relative time
+                    const getRelativeTime = (dateStr: string) => {
+                      const date = new Date(dateStr);
+                      const now = new Date();
+                      const diffMs = now.getTime() - date.getTime();
+                      const diffMins = Math.floor(diffMs / 60000);
+                      const diffHours = Math.floor(diffMs / 3600000);
+                      const diffDays = Math.floor(diffMs / 86400000);
+                      
+                      if (diffMins < 1) return 'Just now';
+                      if (diffMins < 60) return `${diffMins} min ago`;
+                      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                      return date.toLocaleDateString();
+                    };
+                    
+                    if (sortedActivities.length === 0) {
+                      return (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No recent activity
+                        </div>
+                      );
+                    }
+                    
+                    return sortedActivities.map((activity, index) => (
+                      <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground truncate">{activity.action}</p>
+                          <p className="text-sm text-muted-foreground">by {activity.user}</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                          {getRelativeTime(activity.time)}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">{activity.time}</span>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                 </div>
               </div>
 
