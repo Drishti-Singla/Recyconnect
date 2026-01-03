@@ -185,28 +185,34 @@ const LostFound = () => {
                       className="pl-10"
                     />
                   </div>
-                  <Select value={filterCategory} onValueChange={setFilterCategory}>
-                    <SelectTrigger className="w-full md:w-[150px]">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="All">All Categories</SelectItem>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={filterLocation} onValueChange={setFilterLocation}>
-                    <SelectTrigger className="w-full md:w-[150px]">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="All">All Locations</SelectItem>
-                      {locations.map((loc) => (
-                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="w-full md:w-[150px]">
+                    <Label className="text-xs text-muted-foreground mb-1">Category</Label>
+                    <Select value={filterCategory} onValueChange={setFilterCategory}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="All">All Categories</SelectItem>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="w-full md:w-[150px]">
+                    <Label className="text-xs text-muted-foreground mb-1">Location</Label>
+                    <Select value={filterLocation} onValueChange={setFilterLocation}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="All">All Locations</SelectItem>
+                        {locations.map((loc) => (
+                          <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
