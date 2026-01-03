@@ -180,6 +180,9 @@ exports.updateDonatedItem = async (req, res) => {
     const donorId = req.user.id;
     const { title, description, category, condition, pickup_location, image_urls, status } = req.body;
 
+    console.log('Update request for item:', id);
+    console.log('Update data:', { title, description, category, condition, pickup_location, status });
+
     // Check if item exists and belongs to user
     const checkResult = await db.query(
       'SELECT * FROM donated_items WHERE id = $1',
@@ -208,6 +211,8 @@ exports.updateDonatedItem = async (req, res) => {
        RETURNING *`,
       [title, description, category, condition, pickup_location, image_urls, status, id]
     );
+
+    console.log('Updated item:', result.rows[0]);
 
     res.json({
       message: 'Donated item updated successfully',
