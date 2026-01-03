@@ -98,9 +98,8 @@ const LostFound = () => {
     const matchesSearch = item.title?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === "All" || item.category === filterCategory;
     const matchesLocation = filterLocation === "All" || item.location === filterLocation;
-    const matchesType = itemType === "lost" ? item.report_type === "lost" : item.report_type === "found";
     const isNotResolved = item.status !== "resolved" && item.status !== "reunited";
-    return matchesSearch && matchesCategory && matchesLocation && matchesType && isNotResolved;
+    return matchesSearch && matchesCategory && matchesLocation && isNotResolved;
   });
 
   const handleReportSubmit = async (e: React.FormEvent) => {
@@ -169,7 +168,7 @@ const LostFound = () => {
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-5xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="view">View Lost Items</TabsTrigger>
+              <TabsTrigger value="view">View Lost & Found</TabsTrigger>
               <TabsTrigger value="report">Report Lost/Found</TabsTrigger>
             </TabsList>
 
@@ -177,19 +176,10 @@ const LostFound = () => {
               {/* Filters */}
               <div className="bg-card rounded-xl p-4 shadow-card mb-6">
                 <div className="flex flex-col md:flex-row gap-4">
-                  <Select value={itemType} onValueChange={(v: "lost" | "found") => setItemType(v)}>
-                    <SelectTrigger className="w-full md:w-[150px]">
-                      <SelectValue placeholder="Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="lost">Lost Items</SelectItem>
-                      <SelectItem value="found">Found Items</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
-                      placeholder={`Search ${itemType} items...`}
+                      placeholder="Search lost & found items..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
