@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { donatedItemsAPI, itemsAPI, uploadAPI } from "@/services/api";
 
 const categories = ["Electronics", "Furniture", "Books", "Clothing", "Sports", "Other"];
-const conditions = ["New", "Like New", "Good", "Fair"];
+const conditions = ["new", "like new", "good", "fair"];
 const locations = [
   "Block A",
   "Block B",
