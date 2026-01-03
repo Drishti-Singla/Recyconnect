@@ -102,10 +102,10 @@ exports.createItem = async (req, res) => {
     const price = asking_price || askingPrice || null;
 
     const result = await db.query(
-      `INSERT INTO items (user_id, title, description, category, location, image_urls, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO items (user_id, title, description, category, location, image_urls, asking_price, condition, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [userId, title, description, category, location || null, image_urls || [], 'active']
+      [userId, title, description, category, location || null, image_urls || [], price, condition || null, 'active']
     );
 
     res.status(201).json({
@@ -189,10 +189,12 @@ exports.updateItem = async (req, res) => {
            location = COALESCE($4, location),
            image_urls = COALESCE($5, image_urls),
            status = COALESCE($6, status),
+           asking_price = COALESCE($7, asking_price),
+           condition = COALESCE($8, condition),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $7
+       WHERE id = $9
        RETURNING *`,
-      [title, description, category, location, image_urls, status, id]
+      [title, description, category, location, image_urls, status, price, condition, id]
     );
 
     console.log('Item updated successfully:', result.rows[0]);

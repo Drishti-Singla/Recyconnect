@@ -9,7 +9,8 @@ async function runMigration() {
     // List of migration files to run in order
     const migrations = [
       'add_anonymity_to_donated_items.sql',
-      'add_quantity_to_donated_items.sql'
+      'add_quantity_to_donated_items.sql',
+      'add_marketplace_fields.sql'
     ];
     
     console.log('🚀 Starting database migrations...\n');

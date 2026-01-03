@@ -232,10 +232,10 @@ const Login = () => {
           <p className="text-sm font-semibold text-foreground mb-3 text-center">Demo Credentials:</p>
           <div className="space-y-2">
             <div className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Admin:</span> admin@chitkara.edu.in | CHIT01 | admin@chitkara.edu.in
+              <span className="font-medium text-foreground">Admin:</span> admin@chitkara.edu.in | Password: admin@chitkara.edu.in
             </div>
             <div className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">User:</span> user@chitkara.edu.in | CHIT01 | user@chitkara.edu.in
+              <span className="font-medium text-foreground">User:</span> user@chitkara.edu.in | Password: user@chitkara.edu.in
             </div>
           </div>
         </div>

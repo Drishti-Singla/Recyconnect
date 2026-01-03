@@ -1,0 +1,8 @@
+# Run this command with your production database URL
+# Replace YOUR_POSTGRES_URL with the actual URL from Vercel
+
+# Windows PowerShell:
+$env:POSTGRES_URL="YOUR_POSTGRES_URL"; node migrate.js
+
+# Example format:
+# $env:POSTGRES_URL="postgresql://username:password@host:5432/database"; node migrate.js

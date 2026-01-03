@@ -13,8 +13,6 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [invalidEmailCount, setInvalidEmailCount] = useState(0);
-  const [showMeme, setShowMeme] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -40,11 +38,6 @@ const Signup = () => {
           error = "Email is required";
         } else if (!value.endsWith("@chitkara.edu.in")) {
           error = "Email must end with @chitkara.edu.in";
-          setInvalidEmailCount((prev) => {
-            const newCount = prev + 1;
-            if (newCount >= 3) setShowMeme(true);
-            return newCount;
-          });
         }
         break;
       case "phone":
@@ -147,29 +140,6 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-muted via-background to-muted py-12 px-4">
-      {/* Meme Modal */}
-      {showMeme && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-card rounded-2xl p-8 max-w-md mx-4 text-center shadow-elevated animate-scale-in">
-            <div className="text-6xl mb-4">🤔</div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-2">
-              Having trouble?
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Remember: Only @chitkara.edu.in emails are allowed!
-            </p>
-            <img 
-              src="https://i.imgflip.com/1p7d8g.jpg" 
-              alt="Thinking meme"
-              className="w-full max-w-xs mx-auto rounded-lg mb-4"
-            />
-            <Button onClick={() => setShowMeme(false)}>
-              Got it!
-            </Button>
-          </div>
-        </div>
-      )}
-
       <div className="w-full max-w-md">
         {/* Back to Home */}
         <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6 group">
@@ -404,10 +374,10 @@ const Signup = () => {
           <p className="text-sm font-semibold text-foreground mb-3 text-center">Demo Credentials:</p>
           <div className="space-y-2">
             <div className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Admin:</span> admin@chitkara.edu.in | CHIT01 | admin@chitkara.edu.in
+              <span className="font-medium text-foreground">Admin:</span> admin@chitkara.edu.in | Password: admin@chitkara.edu.in
             </div>
             <div className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">User:</span> user@chitkara.edu.in | CHIT01 | user@chitkara.edu.in
+              <span className="font-medium text-foreground">User:</span> user@chitkara.edu.in | Password: user@chitkara.edu.in
             </div>
           </div>
         </div>
