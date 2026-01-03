@@ -476,7 +476,7 @@ const Donate = () => {
                   ) : (
                     <>
                       <CheckCircle className="w-5 h-5 mr-2" />
-                      {formData.isFree ? 'Post Donation' : 'Post Item'}
+                      {formData.isDonation ? 'Post Donation' : 'Post Item'}
                     </>
                   )}
                 </Button>
