@@ -192,23 +192,30 @@ const Dashboard = () => {
         status: editFormData.status,
       };
 
+      console.log('Saving edit for item:', editingItem.id, editingItem.type);
+      console.log('Updates:', updates);
+
       // Add type-specific fields
       if (editingItem.type === 'donated') {
         updates.pickup_location = editFormData.location;
         updates.condition = editFormData.condition;
+        console.log('Updating donated item');
         await donatedItemsAPI.update(editingItem.id, updates);
       } else if (editingItem.type === 'marketplace') {
         updates.location = editFormData.location;
         updates.condition = editFormData.condition;
         updates.asking_price = editFormData.asking_price;
+        console.log('Updating marketplace item');
         await itemsAPI.update(editingItem.id, updates);
       } else if (editingItem.report_type) {
         // Lost & Found item
         updates.location = editFormData.location;
         updates.report_type = editFormData.report_type;
+        console.log('Updating lost/found item');
         await reportedItemsAPI.update(editingItem.id, updates);
       }
 
+      console.log('Update successful');
       toast({
         title: "Success",
         description: "Item updated successfully",
@@ -219,9 +226,10 @@ const Dashboard = () => {
       // Reload the data to show updated item
       await loadDashboardData();
     } catch (error) {
+      console.error('Update error:', error);
       toast({
         title: "Error",
-        description: "Failed to update item",
+        description: error instanceof Error ? error.message : "Failed to update item",
         variant: "destructive",
       });
     } finally {
