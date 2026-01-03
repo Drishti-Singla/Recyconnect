@@ -107,6 +107,17 @@ const LostFound = () => {
     setIsLoading(true);
     
     try {
+      // Validate required fields
+      if (!reportForm.title || !reportForm.description || !reportForm.category || !reportForm.location) {
+        toast({
+          title: "Missing required fields",
+          description: "Please fill in all required fields (title, category, description, and location).",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const itemData = {
         title: reportForm.title,
         description: reportForm.description,

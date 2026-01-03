@@ -97,6 +97,36 @@ const validateConcern = [
   validate
 ];
 
+// Reported Item validation rules
+const validateReportedItem = [
+  body('report_type')
+    .isIn(['lost', 'found'])
+    .withMessage('Report type must be either "lost" or "found"'),
+  body('title')
+    .trim()
+    .isLength({ min: 3, max: 200 })
+    .withMessage('Title must be between 3 and 200 characters'),
+  body('description')
+    .trim()
+    .isLength({ min: 10, max: 2000 })
+    .withMessage('Description must be between 10 and 2000 characters'),
+  body('category')
+    .trim()
+    .notEmpty()
+    .withMessage('Category is required'),
+  body('location')
+    .trim()
+    .notEmpty()
+    .withMessage('Location is required')
+    .isLength({ max: 200 })
+    .withMessage('Location must not exceed 200 characters'),
+  body('date_lost_found')
+    .optional()
+    .isDate()
+    .withMessage('Invalid date format'),
+  validate
+];
+
 // Flag validation rules
 const validateFlag = [
   body('targetType')
@@ -127,6 +157,7 @@ module.exports = {
   validateItem,
   validateMessage,
   validateConcern,
+  validateReportedItem,
   validateFlag,
   validateId
 };

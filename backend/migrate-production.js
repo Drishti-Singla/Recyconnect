@@ -32,6 +32,15 @@ async function runProductionMigration() {
     `);
     console.log('✅ Completed: add_quantity_to_donated_items\n');
 
+    // Migration 3: Add marketplace fields to items table
+    console.log('📄 Running: add_marketplace_fields');
+    await client.query(`
+      ALTER TABLE items 
+      ADD COLUMN IF NOT EXISTS asking_price DECIMAL(10, 2),
+      ADD COLUMN IF NOT EXISTS condition VARCHAR(20) CHECK (condition IN ('new', 'like new', 'good', 'fair', 'poor'))
+    `);
+    console.log('✅ Completed: add_marketplace_fields\n');
+
     console.log('✨ All migrations completed successfully!');
     
   } catch (error) {

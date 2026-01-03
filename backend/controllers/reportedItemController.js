@@ -96,7 +96,16 @@ exports.createReportedItem = async (req, res) => {
       image_urls 
     } = req.body;
 
-    console.log('Creating reported item with type:', report_type);
+    console.log('Creating reported item with data:', { report_type, title, category, location });
+
+    // Additional validation to ensure required fields are present
+    if (!location || location.trim() === '') {
+      return res.status(400).json({ error: 'Location is required' });
+    }
+    
+    if (!report_type || !['lost', 'found'].includes(report_type)) {
+      return res.status(400).json({ error: 'Valid report type (lost or found) is required' });
+    }
 
     const result = await db.query(
       `INSERT INTO reported_items (reporter_id, report_type, title, description, category, location, date_lost_found, image_urls, status)
