@@ -116,9 +116,21 @@ export const itemsAPI = {
     return handleResponse(response);
   },
 
-  updateStatus: async (itemId: number, updates: any) => {
+  update: async (itemId: number, updates: any) => {
     const response = await fetch(`${API_URL}/items/${itemId}`, {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify(updates),
+    });
+    return handleResponse(response);
+  },
+
+  updateStatus: async (itemId: number, updates: any) => {
+    const response = await fetch(`${API_URL}/items/${itemId}`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${getAuthToken()}`,
@@ -165,6 +177,18 @@ export const donatedItemsAPI = {
       headers: {
         'Authorization': `Bearer ${getAuthToken()}`,
       },
+    });
+    return handleResponse(response);
+  },
+
+  update: async (itemId: number, updates: any) => {
+    const response = await fetch(`${API_URL}/donated-items/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify(updates),
     });
     return handleResponse(response);
   },
@@ -322,7 +346,17 @@ export const reportedItemsAPI = {
     });
     return handleResponse(response);
   },
-
+  update: async (itemId: number, updates: any) => {
+    const response = await fetch(`${API_URL}/reported-items/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify(updates),
+    });
+    return handleResponse(response);
+  },
   updateStatus: async (itemId: number, updates: any) => {
     const response = await fetch(`${API_URL}/reported/${itemId}`, {
       method: 'PATCH',

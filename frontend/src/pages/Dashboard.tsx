@@ -196,17 +196,17 @@ const Dashboard = () => {
       if (editingItem.type === 'donated') {
         updates.pickup_location = editFormData.location;
         updates.condition = editFormData.condition;
-        await donatedItemsAPI.updateStatus(editingItem.id, updates);
+        await donatedItemsAPI.update(editingItem.id, updates);
       } else if (editingItem.type === 'marketplace') {
         updates.location = editFormData.location;
         updates.condition = editFormData.condition;
         updates.asking_price = editFormData.asking_price;
-        await itemsAPI.updateStatus(editingItem.id, updates);
+        await itemsAPI.update(editingItem.id, updates);
       } else if (editingItem.report_type) {
         // Lost & Found item
         updates.location = editFormData.location;
         updates.report_type = editFormData.report_type;
-        await reportedItemsAPI.updateStatus(editingItem.id, updates);
+        await reportedItemsAPI.update(editingItem.id, updates);
       }
 
       toast({
