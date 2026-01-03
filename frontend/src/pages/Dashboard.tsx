@@ -183,7 +183,7 @@ const Dashboard = () => {
   const handleSaveEdit = async () => {
     if (!editingItem) return;
 
-    setIsLoading(true);
+    setLoading(true);
     try {
       const updates: any = {
         title: editFormData.title,
@@ -233,7 +233,7 @@ const Dashboard = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
