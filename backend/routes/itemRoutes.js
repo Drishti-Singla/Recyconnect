@@ -6,11 +6,11 @@ const { validateItem, validateId } = require('../middleware/validation');
 
 // Public routes (with optional auth to get user-specific data)
 router.get('/', optionalAuth, itemController.getAllItems);
-router.get('/:id', optionalAuth, validateId, itemController.getItemById);
 
-// Protected routes
+// Protected routes - put specific routes before parameterized routes
 router.post('/', authenticateToken, validateItem, itemController.createItem);
 router.get('/user/:userId', authenticateToken, itemController.getUserItems);
+router.get('/:id', optionalAuth, validateId, itemController.getItemById);
 router.put('/:id', authenticateToken, validateId, itemController.updateItem);
 router.delete('/:id', authenticateToken, validateId, itemController.deleteItem);
 
