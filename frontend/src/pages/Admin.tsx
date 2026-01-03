@@ -62,14 +62,14 @@ import { adminAPI, donatedItemsAPI, concernsAPI, messagesAPI, itemsAPI, authAPI 
 const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeSection, setActiveSection] = useState<"overview" | "users" | "donations" | "lostfound" | "concerns" | "messages" | "settings">("overview");
+  const [activeSection, setActiveSection] = useState<"overview" | "users" | "donations" | "marketplace" | "concerns" | "messages" | "settings">("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
   const [donations, setDonations] = useState<any[]>([]);
   const [concerns, setConcerns] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
-  const [lostFoundItems, setLostFoundItems] = useState<any[]>([]);
+  const [marketplaceItems, setMarketplaceItems] = useState<any[]>([]);
   const [adminProfile, setAdminProfile] = useState<any>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -197,7 +197,7 @@ const Admin = () => {
       setDonations(donationsData.donatedItems || []);
       setConcerns(concernsData.concerns || []);
       setMessages(messagesData.conversations || []);
-      setLostFoundItems(itemsData.items || []);
+      setMarketplaceItems(itemsData.items || []);
       
       // Load admin profile
       await loadAdminProfile();
@@ -570,7 +570,7 @@ const Admin = () => {
     { id: "overview", icon: LayoutDashboard, label: "Dashboard" },
     { id: "users", icon: Users, label: "Users" },
     { id: "donations", icon: Package, label: "Donations" },
-    { id: "lostfound", icon: Search, label: "Lost & Found" },
+    { id: "marketplace", icon: Package, label: "Marketplace" },
     { id: "concerns", icon: Flag, label: "Concerns" },
     { id: "messages", icon: MessageCircle, label: "Messages" },
     { id: "settings", icon: Settings, label: "Settings" },
@@ -579,7 +579,7 @@ const Admin = () => {
   const stats = [
     { label: "Total Users", value: users.length.toString(), icon: Users, change: "+12%", color: "bg-primary" },
     { label: "Total Donations", value: donations.length.toString(), icon: Package, change: "+8%", color: "bg-secondary" },
-    { label: "Lost & Found", value: lostFoundItems.length.toString(), icon: Search, change: "+5%", color: "bg-yellow-500" },
+    { label: "Marketplace", value: marketplaceItems.length.toString(), icon: Package, change: "+5%", color: "bg-yellow-500" },
     { label: "Active Concerns", value: concerns.filter(c => c.status === 'pending' || c.status === 'in_progress').length.toString(), icon: Flag, change: "-3%", color: "bg-destructive" },
   ];
 
@@ -1044,10 +1044,10 @@ const Admin = () => {
           </div>
         )}
 
-        {/* Lost & Found Tab */}
-        {activeSection === "lostfound" && (
+        {/* Marketplace Tab */}
+        {activeSection === "marketplace" && (
           <div className="animate-fade-in">
-            <h1 className="font-display text-3xl font-bold text-foreground mb-6">Lost & Found Items</h1>
+            <h1 className="font-display text-3xl font-bold text-foreground mb-6">Marketplace Items</h1>
             <div className="bg-card rounded-xl shadow-card overflow-hidden">
               <Table>
                 <TableHeader>
@@ -1055,7 +1055,9 @@ const Admin = () => {
                     <TableHead>ID</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>Posted By</TableHead>
+                    <TableHead>Condition</TableHead>
+                    <TableHead>Price (₹)</TableHead>
+                    <TableHead>Seller</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Status</TableHead>
@@ -1065,23 +1067,37 @@ const Admin = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8">
+                      <TableCell colSpan={10} className="text-center py-8">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
                       </TableCell>
                     </TableRow>
-                  ) : lostFoundItems.length === 0 ? (
+                  ) : marketplaceItems.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                        No lost & found items
+                      <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                        No marketplace items
                       </TableCell>
                     </TableRow>
-                  ) : lostFoundItems.map((item) => (
+                  ) : marketplaceItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">{item.id}</TableCell>
-                      <TableCell>{item.title}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{item.title}</TableCell>
                       <TableCell>{item.category}</TableCell>
+                      <TableCell>
+                        {item.condition ? (
+                          <Badge variant="outline">{item.condition}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Not set</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {item.asking_price ? (
+                          <span className="font-semibold text-primary">₹{item.asking_price}</span>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Not set</span>
+                        )}
+                      </TableCell>
                       <TableCell>{item.username || 'Anonymous'}</TableCell>
-                      <TableCell>{item.location || 'N/A'}</TableCell>
+                      <TableCell className="max-w-[150px] truncate">{item.location || 'N/A'}</TableCell>
                       <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
@@ -1103,27 +1119,27 @@ const Admin = () => {
                                   <MessageCircle className="w-4 h-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>Contact Reporter</TooltipContent>
+                              <TooltipContent>Contact Seller</TooltipContent>
                             </Tooltip>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={() => handleUpdateItemStatus(item.id, 'found')}>
-                                  <Search className="w-4 h-4 text-green-600" />
+                                <Button variant="ghost" size="icon" onClick={() => handleUpdateItemStatus(item.id, 'sold')}>
+                                  <Package className="w-4 h-4 text-green-600" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>Mark as Found</TooltipContent>
+                              <TooltipContent>Mark as Sold</TooltipContent>
                             </Tooltip>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={() => handleUpdateItemStatus(item.id, 'claimed')}>
-                                  <Package className="w-4 h-4 text-blue-600" />
+                                <Button variant="ghost" size="icon" onClick={() => handleUpdateItemStatus(item.id, 'available')}>
+                                  <Activity className="w-4 h-4 text-blue-600" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>Mark as Claimed</TooltipContent>
+                              <TooltipContent>Mark as Available</TooltipContent>
                             </Tooltip>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteItem(item.id, 'lost & found item')}>
+                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteItem(item.id, 'marketplace item')}>
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </TooltipTrigger>
