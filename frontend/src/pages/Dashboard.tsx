@@ -183,6 +183,7 @@ const Dashboard = () => {
   const handleSaveEdit = async () => {
     if (!editingItem) return;
 
+    setIsLoading(true);
     try {
       const updates: any = {
         title: editFormData.title,
@@ -214,13 +215,17 @@ const Dashboard = () => {
       });
       setShowEditDialog(false);
       setEditingItem(null);
-      loadDashboardData();
+      
+      // Reload the data to show updated item
+      await loadDashboardData();
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update item",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
