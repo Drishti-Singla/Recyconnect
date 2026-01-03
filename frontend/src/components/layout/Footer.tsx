@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Recycle, Github, Twitter, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { Recycle, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -20,29 +20,53 @@ const Footer = () => {
               Building a cleaner, greener, and more connected world through 
               community-driven recycling and resource sharing.
             </p>
-            <div className="flex gap-3">
-              <a
-                href="https://github.com/Drishti-Singla"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/drishti-singla-a3881a29a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
+            <div className="space-y-4">
+              <div>
+                <p className="text-background/80 text-xs font-semibold mb-2">Drishti Singla</p>
+                <div className="flex gap-3">
+                  <a
+                    href="https://github.com/Drishti-Singla"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
+                    title="Drishti's GitHub"
+                  >
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/drishti-singla-a3881a29a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
+                    title="Drishti's LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+              <div>
+                <p className="text-background/80 text-xs font-semibold mb-2">Astha Balda</p>
+                <div className="flex gap-3">
+                  <a
+                    href="https://github.com/Astha-Balda"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
+                    title="Astha's GitHub"
+                  >
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/astha-balda-40735b291?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300"
+                    title="Astha's LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 
