@@ -339,32 +339,66 @@ export const reportedItemsAPI = {
 // Upload API
 export const uploadAPI = {
   uploadImage: async (file: File) => {
-    const formData = new FormData();
-    formData.append('image', file);
-    
-    const response = await fetch(`${API_URL}/upload/image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-      },
-      body: formData,
-    });
-    return handleResponse(response);
+    try {
+      // Get upload signature from backend
+      const signatureResponse = await fetch(`${API_URL}/upload/signature`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!signatureResponse.ok) {
+        throw new Error('Failed to get upload signature');
+      }
+
+      const { signature, timestamp, cloudName, apiKey, folder } = await signatureResponse.json();
+
+      // Upload directly to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('signature', signature);
+      formData.append('timestamp', timestamp.toString());
+      formData.append('api_key', apiKey);
+      formData.append('folder', folder);
+
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(error.error?.message || 'Upload failed');
+      }
+
+      const result = await uploadResponse.json();
+      
+      return {
+        imageUrl: result.secure_url,
+        publicId: result.public_id,
+      };
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      throw new Error(error.message || 'Failed to upload image');
+    }
   },
 
   uploadImages: async (files: File[]) => {
-    const formData = new FormData();
-    files.forEach(file => {
-      formData.append('images', file);
-    });
-    
-    const response = await fetch(`${API_URL}/upload/images`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-      },
-      body: formData,
-    });
-    return handleResponse(response);
+    try {
+      const uploadPromises = files.map(file => uploadAPI.uploadImage(file));
+      const results = await Promise.all(uploadPromises);
+      
+      return {
+        images: results,
+      };
+    } catch (error: any) {
+      console.error('Multiple upload error:', error);
+      throw new Error(error.message || 'Failed to upload images');
+    }
   },
 };

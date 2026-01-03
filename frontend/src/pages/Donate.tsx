@@ -123,8 +123,19 @@ const Donate = () => {
 
       // Upload image if selected
       if (selectedImage) {
-        const uploadResult = await uploadAPI.uploadImage(selectedImage);
-        imageUrl = uploadResult.imageUrl;
+        try {
+          const uploadResult = await uploadAPI.uploadImage(selectedImage);
+          imageUrl = uploadResult.imageUrl;
+        } catch (uploadError: any) {
+          console.error('Image upload failed:', uploadError);
+          toast({
+            title: "Image upload failed",
+            description: uploadError.message || "Failed to upload image. Please try again or post without an image.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
       }
 
       if (formData.isDonation) {
@@ -161,9 +172,10 @@ const Donate = () => {
 
       navigate("/explore");
     } catch (error: any) {
+      console.error('Post item error:', error);
       toast({
         title: "Failed to post item",
-        description: error.message,
+        description: error.message || "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
     } finally {

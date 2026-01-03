@@ -1,46 +1,52 @@
 const express = require('express');
 const router = express.Router();
-const { upload } = require('../config/cloudinary');
+const { cloudinary } = require('../config/cloudinary');
 const { authenticateToken } = require('../middleware/auth');
 
-// Single image upload
-router.post('/image', authenticateToken, upload.single('image'), (req, res) => {
+// Generate signed upload URL for client-side upload
+router.post('/signature', authenticateToken, (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No image file provided' });
-    }
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    const folder = 'recyconnect';
+
+    const signature = cloudinary.utils.api_sign_request(
+      {
+        timestamp: timestamp,
+        folder: folder,
+      },
+      process.env.CLOUDINARY_API_SECRET
+    );
 
     res.json({
-      message: 'Image uploaded successfully',
-      imageUrl: req.file.path,
-      publicId: req.file.filename
+      signature,
+      timestamp,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      folder
     });
   } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error('Signature generation error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate upload signature',
+      details: error.message 
+    });
   }
 });
 
-// Multiple images upload (max 5)
-router.post('/images', authenticateToken, upload.array('images', 5), (req, res) => {
-  try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: 'No image files provided' });
+// Legacy single image upload (kept for backward compatibility, but not recommended for Vercel)
+router.post('/image', authenticateToken, (req, res) => {
+  rLegacy multiple images upload (kept for backward compatibility, but not recommended for Vercel)
+router.post('/images', authenticateToken, (req, res) => {
+  res.status(501).json({ 
+    error: 'Direct server upload not supported on serverless deployment',
+    message: 'Please use client-side upload with /upload/signature endpoint' catch (error) {
+      console.error('Upload error:', error);
+      res.status(500).json({ 
+        error: 'Failed to upload images',
+        details: error.message 
+      });
     }
-
-    const images = req.files.map(file => ({
-      imageUrl: file.path,
-      publicId: file.filename
-    }));
-
-    res.json({
-      message: 'Images uploaded successfully',
-      images
-    });
-  } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'Failed to upload images' });
-  }
+  });
 });
 
 module.exports = router;
