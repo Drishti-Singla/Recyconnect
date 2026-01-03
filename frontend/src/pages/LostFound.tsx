@@ -187,7 +187,9 @@ const LostFound = () => {
                   </div>
                   <Select value={filterCategory} onValueChange={setFilterCategory}>
                     <SelectTrigger className="w-full md:w-[180px]">
-                      <SelectValue placeholder="Category: All" />
+                      <SelectValue>
+                        {filterCategory === "All" ? "Category: All" : `Category: ${filterCategory}`}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="All">All Categories</SelectItem>
@@ -198,7 +200,9 @@ const LostFound = () => {
                   </Select>
                   <Select value={filterLocation} onValueChange={setFilterLocation}>
                     <SelectTrigger className="w-full md:w-[180px]">
-                      <SelectValue placeholder="Location: All" />
+                      <SelectValue>
+                        {filterLocation === "All" ? "Location: All" : `Location: ${filterLocation}`}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="All">All Locations</SelectItem>
