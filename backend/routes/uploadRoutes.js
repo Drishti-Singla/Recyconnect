@@ -33,19 +33,18 @@ router.post('/signature', authenticateToken, (req, res) => {
   }
 });
 
-// Legacy single image upload (kept for backward compatibility, but not recommended for Vercel)
+// Legacy endpoints - not supported on Vercel serverless
 router.post('/image', authenticateToken, (req, res) => {
-  rLegacy multiple images upload (kept for backward compatibility, but not recommended for Vercel)
+  res.status(501).json({ 
+    error: 'Direct server upload not supported on serverless deployment',
+    message: 'Please use client-side upload with /upload/signature endpoint'
+  });
+});
+
 router.post('/images', authenticateToken, (req, res) => {
   res.status(501).json({ 
     error: 'Direct server upload not supported on serverless deployment',
-    message: 'Please use client-side upload with /upload/signature endpoint' catch (error) {
-      console.error('Upload error:', error);
-      res.status(500).json({ 
-        error: 'Failed to upload images',
-        details: error.message 
-      });
-    }
+    message: 'Please use client-side upload with /upload/signature endpoint'
   });
 });
 
