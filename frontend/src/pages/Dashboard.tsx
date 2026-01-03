@@ -809,7 +809,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            {editFormData.report_type !== undefined && (
+            {editFormData.report_type !== undefined && editingItem?.report_type && (
               <div className="space-y-2">
                 <Label>Report Type</Label>
                 <Input
