@@ -167,16 +167,26 @@ const Dashboard = () => {
 
   const handleEditItem = (item: any) => {
     setEditingItem(item);
-    setEditFormData({
+    const formData: any = {
       title: item.title,
       description: item.description,
       category: item.category,
       location: item.location || item.pickup_location || '',
       condition: item.condition || '',
       status: item.status,
-      asking_price: item.asking_price || '',
-      report_type: item.report_type || '',
-    });
+    };
+    
+    // Only add marketplace-specific fields for marketplace items
+    if (item.type === 'marketplace') {
+      formData.asking_price = item.asking_price || '';
+    }
+    
+    // Only add report_type for lost & found items
+    if (item.report_type) {
+      formData.report_type = item.report_type;
+    }
+    
+    setEditFormData(formData);
     setShowEditDialog(true);
   };
 

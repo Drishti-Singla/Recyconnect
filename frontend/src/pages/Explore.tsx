@@ -333,12 +333,14 @@ const Explore = () => {
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                       {item.description}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <div className="flex items-center gap-1 text-muted-foreground flex-1 min-w-0">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
                         <span className="line-clamp-1">{item.pickup_location || 'Unknown'}</span>
                       </div>
-                      <Badge variant="outline">{item.category}</Badge>
+                      {item.type === 'marketplace' && item.asking_price && (
+                        <span className="text-primary font-semibold whitespace-nowrap">₹{item.asking_price}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -408,6 +410,13 @@ const Explore = () => {
                     <Badge variant="secondary">{selectedItem.condition}</Badge>
                   </div>
                 </div>
+
+                {selectedItem.type === 'marketplace' && selectedItem.asking_price && (
+                  <div>
+                    <h4 className="font-semibold text-sm text-muted-foreground mb-1">Asking Price</h4>
+                    <p className="text-2xl font-bold text-primary">₹{selectedItem.asking_price}</p>
+                  </div>
+                )}
 
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">Location</h4>
