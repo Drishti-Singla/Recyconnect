@@ -338,8 +338,12 @@ const Explore = () => {
                         <MapPin className="w-4 h-4 flex-shrink-0" />
                         <span className="line-clamp-1">{item.pickup_location || 'Unknown'}</span>
                       </div>
-                      {item.type === 'marketplace' && item.asking_price && (
-                        <span className="text-primary font-semibold whitespace-nowrap">₹{item.asking_price}</span>
+                      {item.type === 'marketplace' && (
+                        <span className={`font-semibold whitespace-nowrap ${
+                          item.asking_price ? 'text-primary' : 'text-muted-foreground text-xs'
+                        }`}>
+                          {item.asking_price ? `₹${item.asking_price}` : 'Price not set'}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -411,10 +415,14 @@ const Explore = () => {
                   </div>
                 </div>
 
-                {selectedItem.type === 'marketplace' && selectedItem.asking_price && (
+                {selectedItem.type === 'marketplace' && (
                   <div>
                     <h4 className="font-semibold text-sm text-muted-foreground mb-1">Asking Price</h4>
-                    <p className="text-2xl font-bold text-primary">₹{selectedItem.asking_price}</p>
+                    {selectedItem.asking_price ? (
+                      <p className="text-2xl font-bold text-primary">₹{selectedItem.asking_price}</p>
+                    ) : (
+                      <p className="text-muted-foreground italic">Price not set</p>
+                    )}
                   </div>
                 )}
 

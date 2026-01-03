@@ -176,9 +176,9 @@ const Dashboard = () => {
       status: item.status,
     };
     
-    // Only add marketplace-specific fields for marketplace items
+    // Always add asking_price for marketplace items, even if null/empty
     if (item.type === 'marketplace') {
-      formData.asking_price = item.asking_price || '';
+      formData.asking_price = item.asking_price !== null && item.asking_price !== undefined ? item.asking_price : '';
     }
     
     // Only add report_type for lost & found items
@@ -798,13 +798,14 @@ const Dashboard = () => {
               </div>
             )}
 
-            {editFormData.asking_price !== undefined && editingItem?.type === 'marketplace' && (
+            {editingItem?.type === 'marketplace' && (
               <div className="space-y-2">
                 <Label>Asking Price (₹)</Label>
                 <Input
                   type="number"
                   value={editFormData.asking_price || ''}
                   onChange={(e) => setEditFormData({...editFormData, asking_price: e.target.value})}
+                  placeholder="Enter asking price"
                 />
               </div>
             )}
