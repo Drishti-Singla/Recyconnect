@@ -96,12 +96,16 @@ exports.createReportedItem = async (req, res) => {
       image_urls 
     } = req.body;
 
+    console.log('Creating reported item with type:', report_type);
+
     const result = await db.query(
       `INSERT INTO reported_items (reporter_id, report_type, title, description, category, location, date_lost_found, image_urls, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [reporterId, report_type, title, description, category, location, date_lost_found, image_urls || [], 'active']
     );
+
+    console.log('Created item:', result.rows[0]);
 
     res.status(201).json({
       message: 'Reported item created successfully',
