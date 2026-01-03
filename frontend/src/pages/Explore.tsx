@@ -95,11 +95,20 @@ const Explore = () => {
   };
 
   const filteredItems = items.filter((item) => {
-    const matchesSearch = searchQuery === '' || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || item.category?.toLowerCase() === selectedCategory.toLowerCase();
-    const matchesCondition = selectedCondition === "All" || item.condition?.toLowerCase() === selectedCondition.toLowerCase();
-    const matchesLocation = selectedLocation === "All" || item.pickup_location?.toLowerCase().includes(selectedLocation.toLowerCase());
+    const searchLower = searchQuery.toLowerCase().trim();
+    const matchesSearch = searchLower === '' || 
+      (item.title && item.title.toLowerCase().includes(searchLower)) ||
+      (item.description && item.description.toLowerCase().includes(searchLower)) ||
+      (item.category && item.category.toLowerCase().includes(searchLower));
+    
+    const matchesCategory = selectedCategory === "All" || 
+      (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
+    
+    const matchesCondition = selectedCondition === "All" || 
+      (item.condition && item.condition.toLowerCase() === selectedCondition.toLowerCase());
+    
+    const matchesLocation = selectedLocation === "All" || 
+      (item.pickup_location && item.pickup_location.toLowerCase().includes(selectedLocation.toLowerCase()));
     
     return matchesSearch && matchesCategory && matchesCondition && matchesLocation;
   });
