@@ -186,7 +186,9 @@ const Explore = () => {
               <div className="hidden md:flex gap-3">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Category" />
+                    <SelectValue>
+                      {selectedCategory === "All" ? "Category: All" : `Category: ${selectedCategory}`}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -197,7 +199,9 @@ const Explore = () => {
 
                 <Select value={selectedCondition} onValueChange={setSelectedCondition}>
                   <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Condition" />
+                    <SelectValue>
+                      {selectedCondition === "All" ? "Condition: All" : `Condition: ${selectedCondition}`}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {conditions.map((cond) => (
@@ -208,7 +212,9 @@ const Explore = () => {
 
                 <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Location" />
+                    <SelectValue>
+                      {selectedLocation === "All" ? "Location: All" : `Location: ${selectedLocation}`}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {locations.map((loc) => (
