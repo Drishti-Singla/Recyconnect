@@ -200,39 +200,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Tech Stack Section */}
-      <section className="py-20 bg-card">
-        <div className="container px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Built With Modern Technology
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Powered by cutting-edge technologies for optimal performance and reliability
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: "React", label: "Frontend Framework" },
-              { value: "Node.js", label: "Backend Runtime" },
-              { value: "PostgreSQL", label: "Database" },
-              { value: "Socket.io", label: "Real-time Chat" },
-              { value: "Express", label: "Backend Framework" },
-              { value: "TypeScript", label: "Type Safety" },
-              { value: "Cloudinary", label: "Image Storage" },
-              { value: "JWT", label: "Authentication" },
-            ].map((tech, index) => (
-              <div key={index} className="text-center p-6 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                <div className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  {tech.value}
-                </div>
-                <p className="text-muted-foreground text-sm">{tech.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Our Mission Section */}
       <section 
         className="relative py-24 md:py-32"
